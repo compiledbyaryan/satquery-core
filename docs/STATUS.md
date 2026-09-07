@@ -13,7 +13,8 @@ Only the integrator updates this summary. Workers append their own handoff file 
 ## Test-discovery repair
 
 The verification gate retains the 42-test unittest baseline and now also runs the full
-72-test pytest suite, propagating pytest failures. This was verified with Python 3.14.4,
-not Python 3.12. T01 remains incomplete: a clean Python 3.12 setup, a dependency lock,
-and Ruff/mypy cleanup are pending. Passing 72 tests does not certify application or
-scientific correctness.
+72-test pytest suite, propagating pytest failures. A clean uv-locked environment was
+verified with CPython 3.12.14: dependency checks, the full gate, and schema stability pass.
+T01 remains incomplete because Ruff reports 130 issues and mypy reports 25 errors in nine
+source files; those checks are not enabled as gates. Passing 72 tests does not certify
+application or scientific correctness.

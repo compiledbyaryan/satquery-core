@@ -3,16 +3,27 @@
 ## 1. Machine A: Aryan's integration machine
 Use one project folder outside OneDrive/Dropbox. Install Git, GitHub Desktop if a GUI helps, Python 3.12, and Node 24 from their official sites. A GPU is not needed for the contract/API/UI foundation. Linux containers or WSL may be useful for GIS/model workers later; do not install every model environment on every laptop.
 
-Extract this starter into a new folder. Open a terminal in that folder. On Windows PowerShell:
+Use uv 0.12.10 with Python 3.12 so installation is reproduced from `uv.lock`. On Windows PowerShell:
 ```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe scripts\check.py
-.\.venv\Scripts\python.exe -m pytest -q
+py -3.12 -m pip install uv==0.12.10
+uv sync --locked --extra dev --python 3.12
+uv run --locked --extra dev python scripts\check.py
+uv run --locked --extra dev python scripts\export_schemas.py
+git diff --exit-code -- schemas
 ```
-These setup commands are for your machine; clean-environment installation was not completed here. A failed install must be diagnosed before claiming the environment is ready. No activation or execution-policy change is needed when invoking the virtual-environment Python directly.
 
-For macOS/Linux, use `python3.12 -m venv .venv`, then `.venv/bin/python` in the remaining commands. Do not mix Windows and WSL virtual environments.
+On macOS/Linux or WSL:
+```bash
+uv python install 3.12
+uv lock --check --python 3.12
+uv sync --locked --extra dev --python 3.12
+uv run --locked --extra dev python scripts/check.py
+uv run --locked --extra dev python scripts/export_schemas.py
+git diff --exit-code -- schemas
+```
+
+The lock and clean Python 3.12 installation were verified in WSL. A failed install must
+be diagnosed before claiming the environment is ready. Do not mix Windows and WSL virtual environments.
 
 Open the folder in Codex using your existing subscription. Start in planning/read-only mode for T01 diagnosis, then normal scoped editing for its implementation. Select the actual model from the model picker; use Sol high for the first engineering task. Ask it to read AGENTS.md and `prompts/INTEGRATOR.md`. Use Astra for architecture/contract decisions and difficult review, not formatting every file.
 
