@@ -11,47 +11,53 @@ store = shared_job_store  # Unify storage instance
 def submit_run(
     req: RunSubmissionRequest,
     x_owner_id: str = Header(default="scientist_01", alias="X-Owner-ID"),
-):
+) -> RunStatusResponse:
     run = store.create_run(
         query=req.query,
         assets=req.assets,
         owner_id=x_owner_id,
         idempotency_key=req.idempotency_key,
     )
-    return {
-        "run_id": run["run_id"],
-        "status": run["status"],
-        "task": run["task"],
-        "claims": [],
-        "error": run["error"],
-    }
+    return RunStatusResponse.model_validate(
+        {
+            "run_id": run["run_id"],
+            "status": run["status"],
+            "task": run["task"],
+            "claims": [],
+            "error": run["error"],
+        }
+    )
 
 @router.get("/runs/{run_id}", response_model=RunStatusResponse)
-def get_run_status(run_id: str):
+def get_run_status(run_id: str) -> RunStatusResponse:
     run = store.get_run(run_id)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
-    return {
-        "run_id": run["run_id"],
-        "status": run["status"],
-        "task": run["task"],
-        "claims": [],
-        "error": run["error"],
-    }
+    return RunStatusResponse.model_validate(
+        {
+            "run_id": run["run_id"],
+            "status": run["status"],
+            "task": run["task"],
+            "claims": [],
+            "error": run["error"],
+        }
+    )
 
 @router.post("/runs/{run_id}/revise", response_model=RunStatusResponse)
-def revise_run(run_id: str, req: RunRevisionRequest):
+def revise_run(run_id: str, req: RunRevisionRequest) -> RunStatusResponse:
     run = store.get_run(run_id)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
     updated = store.update_status(run_id, "validating")
-    return {
-        "run_id": updated["run_id"],
-        "status": updated["status"],
-        "task": updated["task"],
-        "claims": [],
-        "error": updated["error"],
-    }
+    return RunStatusResponse.model_validate(
+        {
+            "run_id": updated["run_id"],
+            "status": updated["status"],
+            "task": updated["task"],
+            "claims": [],
+            "error": updated["error"],
+        }
+    )
 
 # Include feedback and export routes
 router.include_router(feedback_router)

@@ -7,7 +7,7 @@ from satquery.contracts import ToolContract
 class ToolRegistry:
     """Stores validated ToolContracts and their executable runners."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._tools: dict[tuple[str, str], tuple[ToolContract, Any]] = {}
 
     def register(self, contract: ToolContract, runner: Any) -> None:

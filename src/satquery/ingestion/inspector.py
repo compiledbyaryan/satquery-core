@@ -4,13 +4,20 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
-import rasterio
-from rasterio.errors import RasterioIOError
+import rasterio  # type: ignore[import-untyped]  # Rasterio does not publish typing metadata.
+from rasterio.errors import (  # type: ignore[import-untyped]  # Third-party boundary.
+    RasterioIOError,
+)
 
-from satquery.contracts import AssetRecord, GridSpec
+from satquery.contracts import AssetRecord, GridSpec, Modality
 
 MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024  # 500 MB upload limit
-ALLOWED_DRIVERS = {"GTiff", "PNG", "JPEG"}
+RasterFormat = Literal["geotiff", "png", "jpeg"]
+DRIVER_FORMATS: dict[str, RasterFormat] = {
+    "GTiff": "geotiff",
+    "PNG": "png",
+    "JPEG": "jpeg",
+}
 
 class IngestionError(Exception):
     pass
@@ -25,7 +32,7 @@ def compute_sha256(file_path: Path) -> str:
 def inspect_raster(
     file_path: Path,
     asset_id: str,
-    modality: str,
+    modality: Modality,
     sensor: str,
     acquired_at: datetime | None = None,
     origin: Literal["public", "synthetic", "restricted"] = "restricted",
@@ -41,8 +48,10 @@ def inspect_raster(
 
     try:
         with rasterio.open(file_path) as src:
-            if src.driver not in ALLOWED_DRIVERS:
-                raise IngestionError(f"Driver '{src.driver}' not permitted. Allowed: {ALLOWED_DRIVERS}")
+            driver = str(src.driver)
+            format_type = DRIVER_FORMATS.get(driver)
+            if format_type is None:
+                raise IngestionError(f"Driver '{driver}' not permitted. Allowed: {set(DRIVER_FORMATS)}")
 
             width = src.width
             height = src.height
@@ -58,7 +67,6 @@ def inspect_raster(
             if crs_str:
                 grid = GridSpec(crs=crs_str, affine=affine_tuple)
 
-            format_type = "geotiff" if src.driver == "GTiff" else src.driver.lower()
             band_names = tuple(f"band_{i+1}" for i in range(band_count))
             acquisition = acquired_at or datetime.now(UTC)
 

@@ -39,7 +39,7 @@ def submit_feedback(
     run_id: str,
     body: FeedbackCreate,
     x_owner_id: str = Header(..., alias="X-Owner-ID"),
-):
+) -> FeedbackResponse:
     run = shared_job_store.get_run(run_id)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
@@ -53,7 +53,7 @@ def submit_feedback(
         rating=body.rating,
         is_private=body.is_private,
     )
-    return record
+    return FeedbackResponse.model_validate(record)
 
 
 @feedback_router.get(
@@ -63,11 +63,12 @@ def submit_feedback(
 def list_feedback(
     run_id: str,
     x_owner_id: str = Header(..., alias="X-Owner-ID"),
-):
+) -> list[FeedbackResponse]:
     run = shared_job_store.get_run(run_id)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
-    return shared_job_store.get_feedback_for_run(run_id, caller_id=x_owner_id)
+    records = shared_job_store.get_feedback_for_run(run_id, caller_id=x_owner_id)
+    return [FeedbackResponse.model_validate(record) for record in records]
 
 
 @feedback_router.get(
@@ -76,7 +77,7 @@ def list_feedback(
 def download_report(
     run_id: str,
     x_owner_id: str = Header(..., alias="X-Owner-ID"),
-):
+) -> dict[str, str]:
     try:
         artifact = build_report(run_id=run_id, owner_id=x_owner_id, job_store=shared_job_store)
         return {

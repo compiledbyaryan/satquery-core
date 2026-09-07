@@ -5,7 +5,7 @@ from satquery.contracts import ArtifactRef, AssetRecord, ClaimRecord
 class ArtifactStore:
     """Manages asset references, generated artifacts, and atomic claims."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._assets: dict[str, AssetRecord] = {}
         self._artifacts: dict[str, ArtifactRef] = {}
         self._claims: dict[str, ClaimRecord] = {}

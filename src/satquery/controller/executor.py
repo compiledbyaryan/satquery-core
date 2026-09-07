@@ -53,8 +53,7 @@ def execute_plan(
             )
         except ValueError as err:
             err_msg = str(err)
-            err_code = "MOCK_PROHIBITED" if "MOCK_PROHIBITED" in err_msg else "UNSUPPORTED"
-            tool_err = ToolError(code=err_code if err_code != "MOCK_PROHIBITED" else "UNSUPPORTED", message=err_msg)
+            tool_err = ToolError(code="UNSUPPORTED", message=err_msg)
             event = ExecutionEvent(
                 event_id=f"evt_{step.step_id}_fail",
                 run_id=run_id,
@@ -101,7 +100,7 @@ def execute_plan(
             )
 
         # 3. Resolve input bindings
-        call_kwargs = {"params": step.params}
+        call_kwargs: dict[str, object] = {"params": step.params}
         bound_inputs: list[str] = []
 
         for binding in step.inputs:
