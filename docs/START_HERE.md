@@ -8,6 +8,7 @@ Use uv 0.12.10 with Python 3.12 so installation is reproduced from `uv.lock`. On
 py -3.12 -m pip install uv==0.12.10
 uv sync --locked --extra dev --python 3.12
 uv run --locked --extra dev python -m ruff check .
+uv run --locked --extra dev python -m mypy
 uv run --locked --extra dev python scripts\check.py
 uv run --locked --extra dev python scripts\export_schemas.py
 git diff --exit-code -- schemas
@@ -22,6 +23,7 @@ uv python install 3.12
 uv lock --check --python 3.12
 uv sync --locked --extra dev --python 3.12
 uv run --locked --extra dev python -m ruff check .
+uv run --locked --extra dev python -m mypy
 uv run --locked --extra dev python scripts/check.py
 uv run --locked --extra dev python scripts/export_schemas.py
 git diff --exit-code -- schemas

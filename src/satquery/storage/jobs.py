@@ -19,7 +19,7 @@ TERMINAL_STATES = {"succeeded", "partial", "failed", "cancelled"}
 
 
 class JobStore:
-    def __init__(self, db_path: str = ":memory:"):
+    def __init__(self, db_path: str = ":memory:") -> None:
         self.db_path = db_path
         self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
@@ -28,7 +28,7 @@ class JobStore:
     def _get_conn(self) -> sqlite3.Connection:
         return self._conn
 
-    def _init_db(self):
+    def _init_db(self) -> None:
         with self._get_conn() as conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS runs (
@@ -117,7 +117,10 @@ class JobStore:
                 ),
             )
             conn.commit()
-            return self.get_run(run_id)
+            created = self.get_run(run_id)
+            if created is None:
+                raise RuntimeError(f"Run {run_id} was not persisted")
+            return created
 
     def get_run(self, run_id: str) -> dict[str, Any] | None:
         with self._get_conn() as conn:
@@ -166,7 +169,10 @@ class JobStore:
                 (new_status, error, now, run_id),
             )
             conn.commit()
-            return self.get_run(run_id)
+            updated = self.get_run(run_id)
+            if updated is None:
+                raise RuntimeError(f"Run {run_id} disappeared after update")
+            return updated
 
     def record_feedback(
         self,
@@ -241,6 +247,6 @@ class JobStore:
         del d["assets_json"]
         return d
 
-    def close(self):
+    def close(self) -> None:
         if self._conn:
             self._conn.close()

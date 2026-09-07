@@ -49,6 +49,10 @@ class TemporalSpecialist:
         after: AssetRecord,
         params: TemporalParams,
     ) -> ToolResult:
+        before_time = before.acquired_at
+        after_time = after.acquired_at
+        if before_time is None or after_time is None:
+            raise ValueError("MISSING_TIME")
         # Physical law: enforce strictly ordered timestamps (t0 < t1)
         validate_temporal_order(before, after)
 
@@ -57,11 +61,11 @@ class TemporalSpecialist:
             raise ValueError("MODALITY_MISMATCH: Both observations must be optical.")
 
         target = (params.target or "built_up").lower()
-        days_apart = (after.acquired_at - before.acquired_at).days
+        days_apart = (after_time - before_time).days
 
         # Grounded change narrative
         description = (
-            f"Bi-temporal evaluation ({before.acquired_at.date()} to {after.acquired_at.date()}, "
+            f"Bi-temporal evaluation ({before_time.date()} to {after_time.date()}, "
             f"{days_apart} days): Detectable expansion in {target} identified across northern sector."
         )
 
@@ -92,7 +96,7 @@ class TemporalSpecialist:
                     check_id="temporal_order_check",
                     status="pass",
                     required=True,
-                    detail=f"Validated temporal sequence: {before.acquired_at.isoformat()} < {after.acquired_at.isoformat()}",
+                    detail=f"Validated temporal sequence: {before_time.isoformat()} < {after_time.isoformat()}",
                 ),
             ),
             candidate_claims=(),
