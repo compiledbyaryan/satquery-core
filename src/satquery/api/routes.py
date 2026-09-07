@@ -1,24 +1,28 @@
-"""FastAPI routes wired to durable JobStore."""
-from fastapi import APIRouter, HTTPException, status
+"""FastAPI routes wired to durable JobStore and Feedback router (Tickets T03 & T11)."""
+from fastapi import APIRouter, Header, HTTPException, status
 from satquery.api.schemas import RunSubmissionRequest, RunRevisionRequest, RunStatusResponse
-from satquery.storage.jobs import JobStore
+from satquery.api.feedback import feedback_router, shared_job_store
 
 router = APIRouter(prefix="/api/v1")
-store = JobStore()  # In production this points to a persistent file path
+store = shared_job_store  # Unify storage instance
 
 @router.post("/runs", response_model=RunStatusResponse, status_code=status.HTTP_202_ACCEPTED)
-def submit_run(req: RunSubmissionRequest):
+def submit_run(
+    req: RunSubmissionRequest,
+    x_owner_id: str = Header(default="scientist_01", alias="X-Owner-ID"),
+):
     run = store.create_run(
         query=req.query,
         assets=req.assets,
-        idempotency_key=req.idempotency_key
+        owner_id=x_owner_id,
+        idempotency_key=req.idempotency_key,
     )
     return {
         "run_id": run["run_id"],
         "status": run["status"],
         "task": run["task"],
         "claims": [],
-        "error": run["error"]
+        "error": run["error"],
     }
 
 @router.get("/runs/{run_id}", response_model=RunStatusResponse)
@@ -31,7 +35,7 @@ def get_run_status(run_id: str):
         "status": run["status"],
         "task": run["task"],
         "claims": [],
-        "error": run["error"]
+        "error": run["error"],
     }
 
 @router.post("/runs/{run_id}/revise", response_model=RunStatusResponse)
@@ -45,5 +49,8 @@ def revise_run(run_id: str, req: RunRevisionRequest):
         "status": updated["status"],
         "task": updated["task"],
         "claims": [],
-        "error": updated["error"]
+        "error": updated["error"],
     }
+
+# Include feedback and export routes
+router.include_router(feedback_router)
