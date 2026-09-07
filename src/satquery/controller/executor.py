@@ -1,17 +1,16 @@
 """Deterministic plan controller and execution core (Ticket T10)."""
-from datetime import datetime, timezone
-from typing import Dict, List, Literal, Optional
-from pydantic import BaseModel, Field
+from datetime import UTC, datetime
+from typing import Literal
+
+from pydantic import BaseModel
 
 from satquery.contracts import (
     ArtifactRef,
     AssetInput,
-    AssetRecord,
     ClaimRecord,
     ExecutionEvent,
     OutputInput,
     PlanRecord,
-    PlanStep,
     ToolError,
     ToolResult,
 )
@@ -26,7 +25,7 @@ class RunOutcome(BaseModel):
     events: tuple[ExecutionEvent, ...]
     artifacts: tuple[ArtifactRef, ...]
     claims: tuple[ClaimRecord, ...] = ()
-    error: Optional[ToolError] = None
+    error: ToolError | None = None
 
 
 def execute_plan(
@@ -37,9 +36,9 @@ def execute_plan(
     simulate_timeout: bool = False,
 ) -> RunOutcome:
     run_id = f"run_{plan.plan_id}"
-    events: List[ExecutionEvent] = []
-    produced_artifacts: Dict[str, ArtifactRef] = {}
-    step_named_outputs: Dict[str, Dict[str, ArtifactRef]] = {}
+    events: list[ExecutionEvent] = []
+    produced_artifacts: dict[str, ArtifactRef] = {}
+    step_named_outputs: dict[str, dict[str, ArtifactRef]] = {}
     sequence = 1
 
     for step in plan.steps:
@@ -61,7 +60,7 @@ def execute_plan(
                 run_id=run_id,
                 step_id=step.step_id,
                 sequence=sequence,
-                at=datetime.now(timezone.utc),
+                at=datetime.now(UTC),
                 status="failed",
                 tool_id=step.tool_id,
                 tool_version=step.tool_version,
@@ -85,7 +84,7 @@ def execute_plan(
                 run_id=run_id,
                 step_id=step.step_id,
                 sequence=sequence,
-                at=datetime.now(timezone.utc),
+                at=datetime.now(UTC),
                 status="failed",
                 tool_id=step.tool_id,
                 tool_version=step.tool_version,
@@ -103,7 +102,7 @@ def execute_plan(
 
         # 3. Resolve input bindings
         call_kwargs = {"params": step.params}
-        bound_inputs: List[str] = []
+        bound_inputs: list[str] = []
 
         for binding in step.inputs:
             if isinstance(binding, AssetInput):
@@ -115,7 +114,7 @@ def execute_plan(
                         run_id=run_id,
                         step_id=step.step_id,
                         sequence=sequence,
-                        at=datetime.now(timezone.utc),
+                        at=datetime.now(UTC),
                         status="failed",
                         tool_id=step.tool_id,
                         tool_version=step.tool_version,
@@ -136,7 +135,7 @@ def execute_plan(
                         run_id=run_id,
                         step_id=step.step_id,
                         sequence=sequence,
-                        at=datetime.now(timezone.utc),
+                        at=datetime.now(UTC),
                         status="failed",
                         tool_id=step.tool_id,
                         tool_version=step.tool_version,
@@ -154,14 +153,14 @@ def execute_plan(
                 result: ToolResult = runner.run(**call_kwargs)
             else:
                 result = runner(**call_kwargs)
-        except Exception as err:
+        except Exception as err:  # noqa: BLE001 -- runner boundary normalizes provider failures
             tool_err = ToolError(code="INTERNAL", message=str(err))
             event = ExecutionEvent(
                 event_id=f"evt_{step.step_id}_err",
                 run_id=run_id,
                 step_id=step.step_id,
                 sequence=sequence,
-                at=datetime.now(timezone.utc),
+                at=datetime.now(UTC),
                 status="failed",
                 tool_id=step.tool_id,
                 tool_version=step.tool_version,
@@ -180,7 +179,7 @@ def execute_plan(
                     run_id=run_id,
                     step_id=step.step_id,
                     sequence=sequence,
-                    at=datetime.now(timezone.utc),
+                    at=datetime.now(UTC),
                     status="failed",
                     tool_id=step.tool_id,
                     tool_version=step.tool_version,
@@ -192,7 +191,7 @@ def execute_plan(
 
         # 6. Record step outputs into the store
         step_named_outputs[step.step_id] = {}
-        step_outputs: List[ArtifactRef] = []
+        step_outputs: list[ArtifactRef] = []
         for out in result.outputs:
             store.store_artifact(out.artifact)
             produced_artifacts[out.artifact.artifact_id] = out.artifact
@@ -204,7 +203,7 @@ def execute_plan(
             run_id=run_id,
             step_id=step.step_id,
             sequence=sequence,
-            at=datetime.now(timezone.utc),
+            at=datetime.now(UTC),
             status="succeeded",
             tool_id=step.tool_id,
             tool_version=step.tool_version,

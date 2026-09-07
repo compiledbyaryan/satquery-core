@@ -1,12 +1,14 @@
 """Tests for raster ingestion and inspection (Ticket T04)."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
 import numpy as np
 import pytest
 import rasterio
 from rasterio.transform import from_origin
 
-from satquery.ingestion.inspector import inspect_raster, IngestionError
+from satquery.ingestion.inspector import IngestionError, inspect_raster
+
 
 @pytest.fixture
 def sample_geotiff(tmp_path):
@@ -35,7 +37,7 @@ def test_inspect_valid_geotiff(sample_geotiff):
         asset_id="ast_test_01",
         modality="optical",
         sensor="sentinel2",
-        acquired_at=datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc),
+        acquired_at=datetime(2026, 1, 1, 12, 0, tzinfo=UTC),
         origin="restricted"
     )
 

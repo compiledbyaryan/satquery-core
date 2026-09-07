@@ -1,5 +1,4 @@
 """Scientist feedback and authenticated export endpoints (Ticket T11)."""
-from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
@@ -12,9 +11,9 @@ shared_job_store = JobStore()
 
 
 class FeedbackCreate(BaseModel):
-    claim_id: Optional[str] = None
+    claim_id: str | None = None
     version: str = "1.0"
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    rating: int | None = Field(None, ge=1, le=5)
     notes: str = Field(..., min_length=1, max_length=2000)
     is_private: bool = True  # Sensitive feedback is private by default
 
@@ -22,10 +21,10 @@ class FeedbackCreate(BaseModel):
 class FeedbackResponse(BaseModel):
     feedback_id: str
     run_id: str
-    claim_id: Optional[str]
+    claim_id: str | None
     version: str
     owner_id: str
-    rating: Optional[int]
+    rating: int | None
     notes: str
     is_private: bool
     created_at: str
@@ -59,7 +58,7 @@ def submit_feedback(
 
 @feedback_router.get(
     "/runs/{run_id}/feedback",
-    response_model=List[FeedbackResponse],
+    response_model=list[FeedbackResponse],
 )
 def list_feedback(
     run_id: str,

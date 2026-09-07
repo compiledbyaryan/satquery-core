@@ -37,7 +37,7 @@ def validate_tool_inputs(contract: ToolContract,
                 raise ValueError("ARTIFACT_KIND")
             continue
         if not isinstance(item,AssetRecord):
-            raise ValueError("ASSET_REQUIRED")
+            raise ValueError("ASSET_REQUIRED")  # noqa: TRY004 -- preserve domain error contract
         asset=item
         if asset.modality not in slot.modalities:
             raise ValueError("MODALITY")

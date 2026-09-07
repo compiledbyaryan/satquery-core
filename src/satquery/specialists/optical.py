@@ -1,6 +1,5 @@
 """Optical VQA and captioning specialist adapter (Ticket T05)."""
 import hashlib
-from typing import Optional
 
 from satquery.contracts import (
     ArtifactRef,
@@ -35,7 +34,7 @@ class OpticalSpecialist:
         max_memory_mb=1024,
     )
 
-    def __init__(self, model_path: Optional[str] = None):
+    def __init__(self, model_path: str | None = None):
         self.model_path = model_path
 
     def run(

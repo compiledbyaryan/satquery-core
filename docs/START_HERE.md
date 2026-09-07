@@ -7,6 +7,7 @@ Use uv 0.12.10 with Python 3.12 so installation is reproduced from `uv.lock`. On
 ```powershell
 py -3.12 -m pip install uv==0.12.10
 uv sync --locked --extra dev --python 3.12
+uv run --locked --extra dev python -m ruff check .
 uv run --locked --extra dev python scripts\check.py
 uv run --locked --extra dev python scripts\export_schemas.py
 git diff --exit-code -- schemas
@@ -14,13 +15,29 @@ git diff --exit-code -- schemas
 
 On macOS/Linux or WSL:
 ```bash
+curl -LsSf https://astral.sh/uv/0.12.10/install.sh -o /tmp/uv-install.sh
+sh /tmp/uv-install.sh
+uv --version
 uv python install 3.12
 uv lock --check --python 3.12
 uv sync --locked --extra dev --python 3.12
+uv run --locked --extra dev python -m ruff check .
 uv run --locked --extra dev python scripts/check.py
 uv run --locked --extra dev python scripts/export_schemas.py
 git diff --exit-code -- schemas
 ```
+
+By default, `uv sync` and `uv run` manage the project's `.venv` and may replace an
+incompatible environment. To preserve an existing `.venv`, first choose and inspect a
+different absolute path, then set it for every project command:
+```bash
+export UV_PROJECT_ENVIRONMENT=/absolute/path/to/a/separate-environment
+test ! -e "$UV_PROJECT_ENVIRONMENT" || readlink -f "$UV_PROJECT_ENVIRONMENT"
+uv sync --locked --extra dev --python 3.12
+uv run --locked --extra dev python scripts/check.py
+```
+Never point `UV_PROJECT_ENVIRONMENT` at an environment that has not been approved for
+replacement or synchronization.
 
 The lock and clean Python 3.12 installation were verified in WSL. A failed install must
 be diagnosed before claiming the environment is ready. Do not mix Windows and WSL virtual environments.

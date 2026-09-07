@@ -38,11 +38,13 @@ from satquery.validation import (
 NOW = datetime(2026, 1, 1, tzinfo=UTC)
 
 def asset(**overrides):
-    data = dict(asset_id="asset_a", version_id="version_a", sha256="a" * 64,
-                format="geotiff", modality="optical", sensor="synthetic",
-                bands=("red", "green", "blue"), width=2, height=2,
-                acquired_at=NOW, origin="synthetic", processing_level="fixture",
-                grid=GridSpec(crs="EPSG:32643", affine=(10.,0.,0.,0.,-10.,0.)))
+    data = {
+        "asset_id": "asset_a", "version_id": "version_a", "sha256": "a" * 64,
+        "format": "geotiff", "modality": "optical", "sensor": "synthetic",
+        "bands": ("red", "green", "blue"), "width": 2, "height": 2,
+        "acquired_at": NOW, "origin": "synthetic", "processing_level": "fixture",
+        "grid": GridSpec(crs="EPSG:32643", affine=(10.,0.,0.,0.,-10.,0.)),
+    }
     data.update(overrides)
     return AssetRecord(**data)
 
@@ -113,7 +115,8 @@ class ContractTests(unittest.TestCase):
             GridSpec(crs="EPSG:4326",affine=(1.,2.,0.,2.,4.,0.))
 
     def test_naive_acquisition_time_rejected(self):
-        with self.assertRaises(ValidationError): asset(acquired_at=datetime(2026,1,1))
+        with self.assertRaises(ValidationError):
+            asset(acquired_at=datetime(2026,1,1))  # noqa: DTZ001 -- intentionally naive input
 
     def test_png_requires_benchmark_identity(self):
         with self.assertRaises(ValidationError): asset(format="png")

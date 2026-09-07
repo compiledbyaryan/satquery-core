@@ -1,8 +1,8 @@
 """Report generation, manifest serialization, and tenant isolation (Ticket T11)."""
 import hashlib
 import json
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from satquery.contracts import ArtifactRef, ClaimRecord
 from satquery.evidence.store import ArtifactStore
@@ -41,16 +41,15 @@ def _generate_minimal_pdf(content_text: str) -> bytes:
 
 class ReportExportError(RuntimeError):
     """Raised when report construction fails."""
-    pass
 
 
 def build_report(
     run_id: str,
     owner_id: str,
-    job_store: Optional[JobStore] = None,
-    artifact_store: Optional[ArtifactStore] = None,
-    claims: Optional[List[ClaimRecord]] = None,
-    events: Optional[List[Dict[str, Any]]] = None,
+    job_store: JobStore | None = None,
+    artifact_store: ArtifactStore | None = None,
+    claims: list[ClaimRecord] | None = None,
+    events: list[dict[str, Any]] | None = None,
 ) -> ArtifactRef:
     """
     Builds a verifiable dual-format report (machine manifest + PDF).
@@ -72,7 +71,7 @@ def build_report(
         )
 
     # 2. Collect snapshot figures, labeling original vs. derived
-    figures: List[Dict[str, Any]] = []
+    figures: list[dict[str, Any]] = []
     for slot_name, asset_id in run["assets"].items():
         figures.append({
             "slot": slot_name,
@@ -121,7 +120,7 @@ def build_report(
         "report_id": f"rep_{run_id}",
         "run_id": run_id,
         "owner_id": owner_id,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "units": {"spatial": "meters", "temporal": "UTC-ISO8601", "area": "hectares"},
         "figures": figures,
         "tools": tools_used,

@@ -1,8 +1,8 @@
 """Durable SQLite-backed job lifecycle, outcomes, and feedback store (Tickets T03 & T11)."""
 import json
 import sqlite3
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 VALID_STATES = {
     "queued",
@@ -78,11 +78,11 @@ class JobStore:
     def create_run(
         self,
         query: str,
-        assets: Dict[str, str],
+        assets: dict[str, str],
         owner_id: str = "scientist_01",
-        idempotency_key: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        now = datetime.now(timezone.utc).isoformat()
+        idempotency_key: str | None = None,
+    ) -> dict[str, Any]:
+        now = datetime.now(UTC).isoformat()
         with self._get_conn() as conn:
             if idempotency_key:
                 row = conn.execute(
@@ -119,7 +119,7 @@ class JobStore:
             conn.commit()
             return self.get_run(run_id)
 
-    def get_run(self, run_id: str) -> Optional[Dict[str, Any]]:
+    def get_run(self, run_id: str) -> dict[str, Any] | None:
         with self._get_conn() as conn:
             row = conn.execute(
                 "SELECT * FROM runs WHERE run_id = ?", (run_id,)
@@ -128,8 +128,8 @@ class JobStore:
                 return None
             return self._row_to_dict(row)
 
-    def save_outcome(self, run_id: str, outcome_data: Dict[str, Any]) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+    def save_outcome(self, run_id: str, outcome_data: dict[str, Any]) -> None:
+        now = datetime.now(UTC).isoformat()
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE runs SET outcome_json = ?, updated_at = ? WHERE run_id = ?",
@@ -138,12 +138,12 @@ class JobStore:
             conn.commit()
 
     def update_status(
-        self, run_id: str, new_status: str, error: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, run_id: str, new_status: str, error: str | None = None
+    ) -> dict[str, Any]:
         if new_status not in VALID_STATES:
             raise ValueError(f"Invalid state: {new_status}")
 
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         with self._get_conn() as conn:
             row = conn.execute(
                 "SELECT status FROM runs WHERE run_id = ?", (run_id,)
@@ -173,12 +173,12 @@ class JobStore:
         run_id: str,
         owner_id: str,
         notes: str,
-        claim_id: Optional[str] = None,
+        claim_id: str | None = None,
         version: str = "1.0",
-        rating: Optional[int] = None,
+        rating: int | None = None,
         is_private: bool = True,
-    ) -> Dict[str, Any]:
-        now = datetime.now(timezone.utc).isoformat()
+    ) -> dict[str, Any]:
+        now = datetime.now(UTC).isoformat()
         with self._get_conn() as conn:
             count = conn.execute("SELECT COUNT(*) FROM feedback").fetchone()[0]
             fb_id = f"fb_{count + 1:04d}"
@@ -216,7 +216,7 @@ class JobStore:
 
     def get_feedback_for_run(
         self, run_id: str, caller_id: str
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         with self._get_conn() as conn:
             rows = conn.execute(
                 "SELECT * FROM feedback WHERE run_id = ?", (run_id,)
@@ -231,7 +231,7 @@ class JobStore:
                 results.append(item)
             return results
 
-    def _row_to_dict(self, row: sqlite3.Row) -> Dict[str, Any]:
+    def _row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:
         d = dict(row)
         d["assets"] = json.loads(d["assets_json"])
         if d.get("outcome_json"):

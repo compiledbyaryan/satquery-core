@@ -1,7 +1,7 @@
 """Tests for HTTP transport contracts (Ticket T02)."""
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-import pytest
+
 from satquery.api.routes import router
 
 app = FastAPI()
