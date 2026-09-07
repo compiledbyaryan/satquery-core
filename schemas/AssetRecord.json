@@ -1,0 +1,215 @@
+{
+  "$defs": {
+    "GridSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "affine": {
+          "maxItems": 6,
+          "minItems": 6,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Affine",
+          "type": "array"
+        },
+        "crs": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Crs",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crs",
+        "affine"
+      ],
+      "title": "GridSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acquired_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acquired At"
+    },
+    "asset_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "bands": {
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Bands",
+      "type": "array"
+    },
+    "benchmark": {
+      "anyOf": [
+        {
+          "enum": [
+            "VRSBench",
+            "RSVQA",
+            "CDVQA"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Benchmark"
+    },
+    "format": {
+      "enum": [
+        "geotiff",
+        "tiff",
+        "png",
+        "jpeg"
+      ],
+      "title": "Format",
+      "type": "string"
+    },
+    "grid": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GridSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "height": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000000,
+      "title": "Height",
+      "type": "integer"
+    },
+    "modality": {
+      "enum": [
+        "optical",
+        "multispectral",
+        "sar"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "nodata_description": {
+      "default": "unknown",
+      "maxLength": 1000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Nodata Description",
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "public",
+        "synthetic",
+        "restricted"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "processing_level": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Processing Level",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sensor": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Sensor",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "units": {
+      "default": "unknown",
+      "maxLength": 1000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Units",
+      "type": "string"
+    },
+    "version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+      "title": "Version Id",
+      "type": "string"
+    },
+    "width": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000000,
+      "title": "Width",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "asset_id",
+    "version_id",
+    "sha256",
+    "format",
+    "origin",
+    "modality",
+    "sensor",
+    "processing_level",
+    "bands",
+    "width",
+    "height"
+  ],
+  "title": "AssetRecord",
+  "type": "object"
+}

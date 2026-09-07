@@ -1,0 +1,451 @@
+{
+  "$defs": {
+    "AnalysisParams": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "analysis",
+          "default": "analysis",
+          "title": "Kind",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "task": {
+          "enum": [
+            "inspect",
+            "measure_change",
+            "verify_claims"
+          ],
+          "title": "Task",
+          "type": "string"
+        },
+        "unit": {
+          "default": "pixels",
+          "enum": [
+            "pixels",
+            "m2",
+            "ha"
+          ],
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "AnalysisParams",
+      "type": "object"
+    },
+    "AssetInput": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "asset",
+          "default": "asset",
+          "title": "Kind",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Slot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slot",
+        "asset_version_id"
+      ],
+      "title": "AssetInput",
+      "type": "object"
+    },
+    "FusionParams": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "fusion",
+          "default": "fusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target",
+          "type": "string"
+        },
+        "task": {
+          "const": "cross_modal",
+          "default": "cross_modal",
+          "title": "Task",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "FusionParams",
+      "type": "object"
+    },
+    "OutputInput": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "output",
+          "default": "output",
+          "title": "Kind",
+          "type": "string"
+        },
+        "output_name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Output Name",
+          "type": "string"
+        },
+        "producer_step": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Producer Step",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "slot": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Slot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slot",
+        "producer_step",
+        "output_name"
+      ],
+      "title": "OutputInput",
+      "type": "object"
+    },
+    "PlanStep": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "inputs": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "asset": "#/$defs/AssetInput",
+                "output": "#/$defs/OutputInput"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AssetInput"
+              },
+              {
+                "$ref": "#/$defs/OutputInput"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Inputs",
+          "type": "array"
+        },
+        "params": {
+          "discriminator": {
+            "mapping": {
+              "analysis": "#/$defs/AnalysisParams",
+              "fusion": "#/$defs/FusionParams",
+              "single": "#/$defs/SingleParams",
+              "temporal": "#/$defs/TemporalParams"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SingleParams"
+            },
+            {
+              "$ref": "#/$defs/TemporalParams"
+            },
+            {
+              "$ref": "#/$defs/FusionParams"
+            },
+            {
+              "$ref": "#/$defs/AnalysisParams"
+            }
+          ],
+          "title": "Params"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "step_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tool_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Tool Id",
+          "type": "string"
+        },
+        "tool_version": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Tool Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "tool_id",
+        "tool_version",
+        "inputs",
+        "params"
+      ],
+      "title": "PlanStep",
+      "type": "object"
+    },
+    "SingleParams": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "single",
+          "default": "single",
+          "title": "Kind",
+          "type": "string"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "task": {
+          "enum": [
+            "vqa",
+            "caption",
+            "grounding"
+          ],
+          "title": "Task",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "SingleParams",
+      "type": "object"
+    },
+    "TemporalParams": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "temporal",
+          "default": "temporal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "task": {
+          "enum": [
+            "change_description",
+            "change_vqa"
+          ],
+          "title": "Task",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "TemporalParams",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "asset_versions": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Asset Versions",
+      "type": "array"
+    },
+    "max_extra_checks": {
+      "default": 2,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Max Extra Checks",
+      "type": "integer"
+    },
+    "max_repairs": {
+      "default": 1,
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Max Repairs",
+      "type": "integer"
+    },
+    "plan_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/PlanStep"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "task": {
+      "enum": [
+        "vqa",
+        "caption",
+        "grounding",
+        "change_description",
+        "change_vqa",
+        "cross_modal",
+        "inspect",
+        "measure_change",
+        "verify_claims"
+      ],
+      "title": "Task",
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_id",
+    "task",
+    "asset_versions",
+    "steps"
+  ],
+  "title": "PlanRecord",
+  "type": "object"
+}

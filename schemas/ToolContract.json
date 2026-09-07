@@ -1,0 +1,234 @@
+{
+  "$defs": {
+    "ArtifactSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted_kinds": {
+          "items": {
+            "enum": [
+              "text",
+              "mask",
+              "boxes",
+              "metrics",
+              "preview",
+              "assertions",
+              "report"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Accepted Kinds",
+          "type": "array"
+        },
+        "kind": {
+          "const": "artifact",
+          "default": "artifact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "accepted_kinds"
+      ],
+      "title": "ArtifactSlot",
+      "type": "object"
+    },
+    "InputSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "asset",
+          "default": "asset",
+          "title": "Kind",
+          "type": "string"
+        },
+        "modalities": {
+          "items": {
+            "enum": [
+              "optical",
+              "multispectral",
+              "sar"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Modalities",
+          "type": "array"
+        },
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "required_bands": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Required Bands",
+          "type": "array"
+        },
+        "requires_georeference": {
+          "default": false,
+          "title": "Requires Georeference",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "modalities"
+      ],
+      "title": "InputSlot",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "allowed_targets": {
+      "default": [],
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Allowed Targets",
+      "type": "array"
+    },
+    "implementation": {
+      "enum": [
+        "real",
+        "mock"
+      ],
+      "title": "Implementation",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "artifact": "#/$defs/ArtifactSlot",
+            "asset": "#/$defs/InputSlot"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/InputSlot"
+          },
+          {
+            "$ref": "#/$defs/ArtifactSlot"
+          }
+        ]
+      },
+      "minItems": 1,
+      "title": "Inputs",
+      "type": "array"
+    },
+    "max_memory_mb": {
+      "exclusiveMinimum": 0,
+      "title": "Max Memory Mb",
+      "type": "integer"
+    },
+    "output_kinds": {
+      "items": {
+        "enum": [
+          "text",
+          "mask",
+          "boxes",
+          "metrics",
+          "preview",
+          "assertions",
+          "report"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Output Kinds",
+      "type": "array"
+    },
+    "params_kind": {
+      "enum": [
+        "single",
+        "temporal",
+        "fusion",
+        "analysis"
+      ],
+      "title": "Params Kind",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task": {
+      "enum": [
+        "vqa",
+        "caption",
+        "grounding",
+        "change_description",
+        "change_vqa",
+        "cross_modal",
+        "inspect",
+        "measure_change",
+        "verify_claims"
+      ],
+      "title": "Task",
+      "type": "string"
+    },
+    "timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 3600,
+      "title": "Timeout Seconds",
+      "type": "integer"
+    },
+    "tool_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_id",
+    "version",
+    "task",
+    "inputs",
+    "output_kinds",
+    "params_kind",
+    "implementation",
+    "timeout_seconds",
+    "max_memory_mb"
+  ],
+  "title": "ToolContract",
+  "type": "object"
+}
