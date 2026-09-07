@@ -8,7 +8,9 @@
 - Public contract changes: none
 - Data/model licences and fixture provenance: no data, model, or new fixture introduced
 
-## Exact setup
+## Historical environment-repair setup
+
+These commands record what ran during that repair; use `START_HERE.md` for current setup.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh -o /tmp/satquery-uv-install.sh

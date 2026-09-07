@@ -1,5 +1,4 @@
 """In-memory and persistent artifact store interface (Ticket T10)."""
-from typing import Dict, Optional, Set
 from satquery.contracts import ArtifactRef, AssetRecord, ClaimRecord
 
 
@@ -7,20 +6,20 @@ class ArtifactStore:
     """Manages asset references, generated artifacts, and atomic claims."""
 
     def __init__(self):
-        self._assets: Dict[str, AssetRecord] = {}
-        self._artifacts: Dict[str, ArtifactRef] = {}
-        self._claims: Dict[str, ClaimRecord] = {}
+        self._assets: dict[str, AssetRecord] = {}
+        self._artifacts: dict[str, ArtifactRef] = {}
+        self._claims: dict[str, ClaimRecord] = {}
 
     def register_asset(self, asset: AssetRecord) -> None:
         self._assets[asset.asset_id] = asset
 
-    def get_asset(self, asset_id: str) -> Optional[AssetRecord]:
+    def get_asset(self, asset_id: str) -> AssetRecord | None:
         return self._assets.get(asset_id)
 
     def store_artifact(self, artifact: ArtifactRef) -> None:
         self._artifacts[artifact.artifact_id] = artifact
 
-    def get_artifact(self, artifact_id: str) -> Optional[ArtifactRef]:
+    def get_artifact(self, artifact_id: str) -> ArtifactRef | None:
         return self._artifacts.get(artifact_id)
 
     def has_artifact(self, artifact_id: str) -> bool:

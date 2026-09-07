@@ -1,5 +1,6 @@
 """Tests for optical-SAR fusion specialist adapter (Ticket T08)."""
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 import pytest
 
 from satquery.contracts import AssetRecord, FusionParams, GridSpec
@@ -18,7 +19,7 @@ def optical_asset():
         bands=("red", "green", "blue"),
         width=256,
         height=256,
-        acquired_at=datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc),
+        acquired_at=datetime(2026, 1, 1, 10, 0, tzinfo=UTC),
         origin="public",
         processing_level="l2a",
         grid=GridSpec(crs="EPSG:32643", affine=(10.0, 0.0, 0.0, 0.0, -10.0, 0.0)),
@@ -37,7 +38,7 @@ def sar_asset():
         bands=("vv", "vh"),
         width=256,
         height=256,
-        acquired_at=datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc),
+        acquired_at=datetime(2026, 1, 1, 10, 0, tzinfo=UTC),
         origin="public",
         processing_level="rtc",
         grid=GridSpec(crs="EPSG:32643", affine=(10.0, 0.0, 0.0, 0.0, -10.0, 0.0)),

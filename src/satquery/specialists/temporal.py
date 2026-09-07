@@ -1,6 +1,5 @@
 """Bi-temporal change detection and reasoning specialist adapter (Ticket T07)."""
 import hashlib
-from typing import Optional
 
 from satquery.contracts import (
     ArtifactRef,
@@ -41,7 +40,7 @@ class TemporalSpecialist:
         max_memory_mb=2048,
     )
 
-    def __init__(self, model_path: Optional[str] = None):
+    def __init__(self, model_path: str | None = None):
         self.model_path = model_path
 
     def run(
@@ -67,7 +66,7 @@ class TemporalSpecialist:
         )
 
         desc_hash = hashlib.sha256(description.encode("utf-8")).hexdigest()
-        mask_hash = hashlib.sha256(f"mask_{before.asset_id}_{after.asset_id}".encode("utf-8")).hexdigest()
+        mask_hash = hashlib.sha256(f"mask_{before.asset_id}_{after.asset_id}".encode()).hexdigest()
 
         return ToolResult(
             outputs=(

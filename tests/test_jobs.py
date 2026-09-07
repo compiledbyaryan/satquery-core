@@ -1,6 +1,8 @@
 """Tests for durable job lifecycle store (Ticket T03)."""
 import pytest
+
 from satquery.storage.jobs import JobStore
+
 
 @pytest.fixture
 def store():

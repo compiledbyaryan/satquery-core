@@ -1,8 +1,9 @@
 """Secure raster ingestion and metadata extraction (Ticket T04)."""
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
+
 import rasterio
 from rasterio.errors import RasterioIOError
 
@@ -26,7 +27,7 @@ def inspect_raster(
     asset_id: str,
     modality: str,
     sensor: str,
-    acquired_at: Optional[datetime] = None,
+    acquired_at: datetime | None = None,
     origin: Literal["public", "synthetic", "restricted"] = "restricted",
 ) -> AssetRecord:
     if not file_path.exists():
@@ -59,7 +60,7 @@ def inspect_raster(
 
             format_type = "geotiff" if src.driver == "GTiff" else src.driver.lower()
             band_names = tuple(f"band_{i+1}" for i in range(band_count))
-            acquisition = acquired_at or datetime.now(timezone.utc)
+            acquisition = acquired_at or datetime.now(UTC)
 
             return AssetRecord(
                 asset_id=asset_id,

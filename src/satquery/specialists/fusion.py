@@ -1,6 +1,5 @@
 """Optical-SAR cross-modal fusion specialist adapter (Ticket T08)."""
 import hashlib
-from typing import Optional
 
 from satquery.contracts import (
     ArtifactRef,
@@ -40,7 +39,7 @@ class FusionSpecialist:
         max_memory_mb=2048,
     )
 
-    def __init__(self, model_path: Optional[str] = None):
+    def __init__(self, model_path: str | None = None):
         self.model_path = model_path
 
     def run(

@@ -3,8 +3,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from satquery.api.routes import router
 from satquery.api.feedback import shared_job_store
+from satquery.api.routes import router
 from satquery.contracts import ArtifactRef, CheckResult, ClaimRecord
 from satquery.evidence.store import ArtifactStore
 from satquery.reports.builder import build_report
