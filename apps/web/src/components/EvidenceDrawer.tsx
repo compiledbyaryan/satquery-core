@@ -59,7 +59,10 @@ export function EvidenceDrawer({
             >
               <span className={tagClass(c.category)}>{c.category}</span>
               {c.stale ? <span className="tag tag-unknown">stale</span> : null}
-              <span style={{ display: "block", marginTop: 6 }}>{c.shortText}</span>
+              <span className="claim-text">{c.shortText}</span>
+              <span className="claim-cta" aria-hidden="true">
+                {selectedId === c.id ? "Hide evidence ↑" : "View evidence →"}
+              </span>
             </button>
           ))}
           {selected ? (

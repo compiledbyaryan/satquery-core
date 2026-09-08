@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, NavLink, Route, Routes } from "react-router-dom";
 import "./app.css";
 import { FixtureBadge } from "./components/chrome";
 import { MissionLibrary } from "./routes/MissionLibrary";
@@ -16,21 +16,26 @@ export function App(): JSX.Element {
       <FixtureBadge mode="UI prototype — synthetic fixtures" />
       <div className="app-shell">
         <nav className="rail" aria-label="Field Desk">
-          <Link to="/" aria-label="Mission library" title="Missions">
-            ▦
-          </Link>
-          <Link to="/projects/proj-delta" aria-label="Workspace" title="Workspace">
-            ◉
-          </Link>
-          <Link to="/runs/run-success" aria-label="Run inspector" title="Runs">
-            ☰
-          </Link>
-          <Link to="/reports/run-success" aria-label="Report" title="Report">
-            ⎙
-          </Link>
-          <Link to="/settings" aria-label="Settings" title="Settings">
-            ⚙
-          </Link>
+          <NavLink to="/" aria-label="Mission library" title="Missions">
+            <span aria-hidden="true" className="rail-glyph">▦</span>
+            <span className="rail-label">Missions</span>
+          </NavLink>
+          <NavLink to="/projects/proj-delta" aria-label="Workspace" title="Workspace">
+            <span aria-hidden="true" className="rail-glyph">◉</span>
+            <span className="rail-label">Workspace</span>
+          </NavLink>
+          <NavLink to="/runs/run-success" aria-label="Run inspector" title="Runs">
+            <span aria-hidden="true" className="rail-glyph">☰</span>
+            <span className="rail-label">Runs</span>
+          </NavLink>
+          <NavLink to="/reports/run-success" aria-label="Report" title="Report">
+            <span aria-hidden="true" className="rail-glyph">⎙</span>
+            <span className="rail-label">Report</span>
+          </NavLink>
+          <NavLink to="/settings" aria-label="Settings" title="Settings">
+            <span aria-hidden="true" className="rail-glyph">⚙</span>
+            <span className="rail-label">Settings</span>
+          </NavLink>
         </nav>
         <div className="main" id="main">
           <Routes>

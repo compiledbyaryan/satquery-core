@@ -38,6 +38,16 @@ export function Workspace(): JSX.Element {
     () => fixtureRuns.find((r) => r.id === runId) ?? fixtureRuns[0],
     [runId]
   );
+  const runOptions: { id: string; label: string }[] = [
+    { id: "run-empty", label: "Empty — no run yet" },
+    { id: "run-queued", label: "Queued — waiting for a worker" },
+    { id: "run-running", label: "Running — tool executing" },
+    { id: "run-partial", label: "Partial — SAR input missing" },
+    { id: "run-success", label: "Success — finding with evidence" },
+    { id: "run-failed", label: "Failed — tool error, retry offered" },
+    { id: "run-unavailable", label: "Model unavailable — no provider" },
+    { id: "run-unsupported", label: "Unsupported — request refused" }
+  ];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
@@ -80,9 +90,9 @@ export function Workspace(): JSX.Element {
           Run
         </label>
         <select id="run-select" value={runId} onChange={(e) => setRunId(e.target.value)}>
-          {fixtureRuns.map((r) => (
+          {runOptions.map((r) => (
             <option key={r.id} value={r.id}>
-              {r.id} — {statusLabel(r.status)}
+              {r.label}
             </option>
           ))}
         </select>
