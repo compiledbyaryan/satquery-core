@@ -1,26 +1,21 @@
 cta-href:http://localhost:4173/app/projects/proj-delta
-after-click-url:http://localhost:4173/app/projects/proj-delta
-workspace-rendered:true
-back-url:http://127.0.0.1:4174/ landing:true
-forward-url:http://localhost:4173/app/projects/proj-delta
+landed-url:http://localhost:4173/app/projects/proj-delta
 direct-url:http://127.0.0.1:4173/app/projects/proj-delta
 refresh-ok:true
-recorded-url:http://127.0.0.1:4173/app/recorded/run-01
-recorded-img:{"w":64,"h":64,"alt":"Recorded EuroSAT sample 01 (64 by 64 pixel RGB pre"}
-has[A blurry image of a building w]:true
-has[No.]:true
-has[Recorded run — not live analys]:true
-has[Not scientifically validated]:true
-has[unvalidated model utterance]:true
-has[human review]:true
-has[203.0s]:true
-has[HuggingFaceTB/SmolVLM-500M-Ins]:true
-has[a7da5b986cb5]:true
-has[cpu]:true
-has[not_scientifically_validated]:true
-json-dl:{"id":"recorded-smollm-cpu-20260908-01","inv":2,"sha":"916c3b694ce2"}
-dialog:true
-esc:true
-motion:none/dashed
-overflow-1440:1440/1440 OK
-overflow-1024:1024/1024 OK
+evidence-dialog:true
+esc-closed:true
+rec[Recorded run — not live anal]:true
+rec[Not scientifically validated]:true
+rec[A blurry image of a building]:true
+rec[No.]:true
+rec[unvalidated model utterance]:true
+rec[human review]:true
+rec[203.0s]:true
+rec[HuggingFaceTB/SmolVLM-500M-I]:true
+rec[not_scientifically_validated]:true
+rec-img:{"w":64,"h":64}
+img-sha-local:916c3b694ce2c971
+img-bytes-match:true
+json-parse-match:true
+submit-pending:"Working…"
+running-strip:true
