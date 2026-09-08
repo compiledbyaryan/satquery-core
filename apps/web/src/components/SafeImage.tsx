@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /** Image that degrades to a labelled placeholder instead of breaking layout.
  *  Failed preview loading never blocks the surrounding workflow. */
@@ -12,6 +12,7 @@ export function SafeImage({
   className?: string;
 }): JSX.Element {
   const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [src]);
   if (failed) {
     return (
       <div
@@ -27,7 +28,7 @@ export function SafeImage({
           fontSize: 13
         }}
       >
-        Preview unavailable (synthetic fixture failed to load). Workflow continues below.
+        Preview unavailable. The source image could not be loaded.
       </div>
     );
   }

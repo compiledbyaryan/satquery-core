@@ -1,3 +1,4 @@
+import original from "../../public/recorded/recorded-run-01/recorded-run.json";
 // Typed view of the published recorded-run record.
 // Field-for-field with docs/handoffs/recorded-run-01/recorded-run.json.
 // No invented fields: confidence, regions, and measurements are absent upstream.
@@ -57,7 +58,7 @@ export interface RecordedRun {
     parameter_count: number;
     dtype: string;
     device: string;
-    preprocessing: Record<string, number | boolean>;
+    preprocessing: Record<string, number | boolean | number[]>;
   };
   invocations: RecordedInvocation[];
 }
@@ -67,14 +68,24 @@ export const RECORDED_IMAGE_URL = `${import.meta.env.BASE_URL}recorded/recorded-
 export const RECORDED_IMAGE_SHA256 =
   "916c3b694ce2c971b5d103a46a0e0031192531b35f18d83683c3308802cad484";
 
-export function parseRecordedRun(raw: unknown): RecordedRun {
-  const r = raw as RecordedRun;
-  if (!r || typeof r !== "object") throw new Error("Recorded run is not an object");
-  if (r.recorded_run_id !== "recorded-smollm-cpu-20260908-01") throw new Error("Unexpected recorded_run_id");
-  if (r.mode !== "recorded") throw new Error("Unexpected mode");
-  if (!Array.isArray(r.invocations) || r.invocations.length === 0) throw new Error("Missing invocations");
-  if (typeof r.human_review_note !== "string" || r.human_review_note.length === 0) {
-    throw new Error("Missing human_review_note");
+// Validate every consumed field against the immutable record's structure before rendering.
+function validateShape(value: unknown, shape: unknown, path: string): void {
+  if (Array.isArray(shape)) {
+    if (!Array.isArray(value) || value.length !== shape.length) throw new Error(`Invalid ${path}`);
+    shape.forEach((item, i) => validateShape(value[i], item, `${path}[${i}]`));
+  } else if (shape !== null && typeof shape === "object") {
+    if (value === null || typeof value !== "object" || Array.isArray(value)) throw new Error(`Invalid ${path}`);
+    for (const [key, child] of Object.entries(shape)) validateShape((value as Record<string, unknown>)[key], child, `${path}.${key}`);
+  } else if (typeof value !== typeof shape || (typeof value === "number" && !Number.isFinite(value))) {
+    throw new Error(`Invalid ${path}`);
   }
-  return r;
+}
+export function parseRecordedRun(raw: unknown): RecordedRun {
+  validateShape(raw, original, "record");
+  const record = raw as RecordedRun;
+  if (record.recorded_run_id !== original.recorded_run_id || record.mode !== "recorded" ||
+      record.input.sha256 !== RECORDED_IMAGE_SHA256 || record.validation_status !== "not_scientifically_validated") {
+    throw new Error("Unexpected recorded identity or validation status");
+  }
+  return record;
 }

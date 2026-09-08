@@ -22,3 +22,13 @@ clean-environment repair established the Python 3.12 installation; this cleanup 
 that verified environment rather than recreating it. T01 remains pending review, GitHub
 CI, and merge. Passing these development checks does not certify application or
 scientific correctness.
+
+## Final demo frontend integration — 2026-09-08
+
+The historical starter statements above are superseded for frontend status by
+`docs/handoffs/demo-completion.md`. The workbench now completes an explicitly labelled
+synthetic fixture submission through result, matching evidence, reset, and JSON export.
+Recorded CPU inference remains separately labelled and unchanged. Both independent apps
+build; 20 frontend tests and 46 real-browser checks pass, along with the existing Python
+baseline. No live UI/backend inference route or scientific acceptance completion is claimed.
+Feature branch: `codex/demo-completion`; review required, no automatic merge.

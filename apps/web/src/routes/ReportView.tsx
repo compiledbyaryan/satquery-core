@@ -1,22 +1,25 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { fixtureRuns } from "../fixtures/library";
+import { resolveRun } from "../logic/demo";
 
 export function ReportView(): JSX.Element {
   const { id } = useParams();
-  const run = fixtureRuns.find((r) => r.id === id) ?? fixtureRuns[0];
+  const run = resolveRun(id);
   const [feedback, setFeedback] = useState("");
   const [saved, setSaved] = useState(false);
   const [failed, setFailed] = useState(false);
 
   const download = (): void => {
+    if (!run) return;
     try {
       const manifest = {
         runId: run.id,
         mode: run.modeLabel,
         question: run.question,
         status: run.status,
-        claims: run.claims.map((c) => ({ id: c.id, text: c.shortText, limitation: c.limitation })),
+        finding: run.finding,
+        inputs: run.inputs.map(({ previewUrl: _preview, ...asset }) => asset),
+        claims: run.claims,
         limitations: run.limitations,
         warning: "Synthetic fixture manifest — not a scientific result."
       };
@@ -25,13 +28,17 @@ export function ReportView(): JSX.Element {
       const a = document.createElement("a");
       a.href = url;
       a.download = `${run.id}-manifest.json`;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setFailed(false);
     } catch {
       setFailed(true);
     }
   };
+
+  if (!run) return <div className="page"><h1>Run unavailable</h1><p>This run is not saved in this browser session.</p><Link to="/projects/proj-delta">Open workspace</Link></div>;
 
   return (
     <div className="page">
