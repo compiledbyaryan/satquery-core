@@ -1,0 +1,21 @@
+cta-href:http://localhost:4173/app/projects/proj-delta
+landed-url:http://localhost:4173/app/projects/proj-delta
+direct-url:http://127.0.0.1:4173/app/projects/proj-delta
+refresh-ok:true
+evidence-dialog:true
+esc-closed:true
+rec[Recorded run — not live anal]:true
+rec[Not scientifically validated]:true
+rec[A blurry image of a building]:true
+rec[No.]:true
+rec[unvalidated model utterance]:true
+rec[human review]:true
+rec[203.0s]:true
+rec[HuggingFaceTB/SmolVLM-500M-I]:true
+rec[not_scientifically_validated]:true
+rec-img:{"w":64,"h":64}
+img-sha-local:916c3b694ce2c971
+img-bytes-match:true
+json-parse-match:true
+submit-pending:"Working…"
+running-strip:true

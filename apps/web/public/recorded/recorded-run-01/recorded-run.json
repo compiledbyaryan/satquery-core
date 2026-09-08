@@ -1,0 +1,95 @@
+{
+  "attribution": {
+    "dataset": "EuroSAT via HuggingFace mirror timm/eurosat-rgb (Helber et al. 2019, Sentinel-2, Copernicus open data); mirror card tags license:mit",
+    "model": "HuggingFaceTB/SmolVLM-500M-Instruct, Apache-2.0"
+  },
+  "evidence_pointers": {
+    "label_audit_location": "evaluation/optical/smollm-eurosat/manifest.json (audit labels stay in the probe manifest only; the source_image_id here is an opaque display alias)",
+    "manifest": "evaluation/optical/smollm-eurosat/manifest.json",
+    "probe_commit": "4f46641cc50719e3f6d5979cdb90fa3b1a11f41c",
+    "raw_invocations": "evaluation/optical/smollm-eurosat/results/run_20260908_cpu/invocations.jsonl",
+    "raw_summary": "evaluation/optical/smollm-eurosat/results/run_20260908_cpu/run_summary.json"
+  },
+  "execution": {
+    "device": "cpu",
+    "elapsed_seconds_total": 203.036258,
+    "finished_at": "2026-09-08T08:56:46.074737+00:00",
+    "generation": {
+      "do_sample": false,
+      "max_new_tokens": 24
+    },
+    "load_seconds": 10.346409510995727,
+    "started_at": "2026-09-08T08:53:23.038498+00:00",
+    "torch_cuda_available": false
+  },
+  "human_review_note": "The caption mentions a building and a person and is inconsistent with the reviewed sample; treat as an unvalidated model utterance, not a supported finding. Do not display this caption as a confirmed result without this note.",
+  "input": {
+    "dataset": "timm/eurosat-rgb",
+    "dataset_revision": "b4e28552cd5f3932b6abc37eb20d3e84901ad728",
+    "display_file": "assets/recorded_sample_01.png",
+    "opaque_name": "sample_01.png",
+    "sha256": "916c3b694ce2c971b5d103a46a0e0031192531b35f18d83683c3308802cad484",
+    "size_px": [
+      64,
+      64
+    ],
+    "source_image_id": "sample-source-0000",
+    "source_mode": "RGB",
+    "split": "train",
+    "streaming_row_index": 0
+  },
+  "invocations": [
+    {
+      "finished_at": "2026-09-08T08:55:08.658134+00:00",
+      "generation_seconds": 89.63159170799918,
+      "input_token_count": 1166,
+      "output": "A blurry image of a building with a person in a dark shirt.",
+      "output_token_count": 15,
+      "preprocessing_seconds": 5.425756138996803,
+      "prompt": "Describe the visible scene in one concise sentence. Mention only features visible in the image; do not infer location, date, sensor, or physical measurements.",
+      "started_at": "2026-09-08T08:53:33.442157+00:00",
+      "task": "caption"
+    },
+    {
+      "finished_at": "2026-09-08T08:56:06.634911+00:00",
+      "generation_seconds": 56.237883128997055,
+      "input_token_count": 1162,
+      "output": "No.",
+      "output_token_count": 3,
+      "preprocessing_seconds": 1.5183806950008147,
+      "prompt": "Does this image appear to contain a large body of water? Answer yes, no, or uncertain, then give one short visual reason.",
+      "started_at": "2026-09-08T08:55:08.764147+00:00",
+      "task": "water_qa"
+    }
+  ],
+  "mode": "recorded",
+  "model": {
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "model_class": "Idefics3ForConditionalGeneration",
+    "name": "HuggingFaceTB/SmolVLM-500M-Instruct",
+    "parameter_count": 507482304,
+    "preprocessing": {
+      "do_normalize": true,
+      "do_rescale": true,
+      "do_resize": true,
+      "image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "longest_edge": 2048,
+      "rescale_factor": 0.00392156862745098
+    },
+    "processor_class": "Idefics3Processor",
+    "revision": "a7da5b986cb59b408707209984f360a5f4ad7e47"
+  },
+  "recorded_run_id": "recorded-smollm-cpu-20260908-01",
+  "source_commit": "4f46641cc50719e3f6d5979cdb90fa3b1a11f41c",
+  "validation_status": "not_scientifically_validated"
+}
