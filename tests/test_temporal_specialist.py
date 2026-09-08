@@ -45,8 +45,9 @@ def after_asset():
     )
 
 
-def test_temporal_specialist_success(before_asset, after_asset):
-    specialist = TemporalSpecialist()
+def test_temporal_specialist_labelled_fixture(before_asset, after_asset):
+    # FIX-02: scripted output is an explicitly labelled fixture, not a real result.
+    specialist = TemporalSpecialist(scripted=True)
     params = TemporalParams(task="change_description", target="built_up")
 
     result = specialist.run(before=before_asset, after=after_asset, params=params)

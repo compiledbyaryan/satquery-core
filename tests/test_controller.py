@@ -58,15 +58,16 @@ def valid_plan():
     )
 
 
-def test_execute_plan_success(optical_asset, valid_plan):
+def test_execute_plan_succeeds_in_mock_fixture_mode(optical_asset, valid_plan):
+    # FIX-02: scripted tools execute only in explicit mock mode (labelled fixture path).
     store = ArtifactStore()
     store.register_asset(optical_asset)
 
     registry = ToolRegistry()
-    specialist = OpticalSpecialist()
+    specialist = OpticalSpecialist(scripted=True)
     registry.register(specialist.CONTRACT, specialist)
 
-    outcome = execute_plan(plan=valid_plan, registry=registry, store=store, mode="real")
+    outcome = execute_plan(plan=valid_plan, registry=registry, store=store, mode="mock")
 
     assert outcome.status == "succeeded"
     assert len(outcome.events) == 1
@@ -117,14 +118,14 @@ def test_execute_plan_timeout_never_yields_success(optical_asset, valid_plan):
     store = ArtifactStore()
     store.register_asset(optical_asset)
     registry = ToolRegistry()
-    specialist = OpticalSpecialist()
+    specialist = OpticalSpecialist(scripted=True)
     registry.register(specialist.CONTRACT, specialist)
 
     outcome = execute_plan(
         plan=valid_plan,
         registry=registry,
         store=store,
-        mode="real",
+        mode="mock",
         simulate_timeout=True,
     )
 
