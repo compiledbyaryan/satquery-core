@@ -24,3 +24,13 @@ Use docs/HANDOFF_TEMPLATE.md. Include changed behaviour/files, exact checks and 
 ## Code Review Rules
 Review the requirement and diff, then reproduce relevant behaviour. Prioritise incorrect modality/bands/CRS/time, invalid units, unresolved output bindings, stale evidence, missing ownership checks, unsafe raster decoding, retries/duplicate jobs, fabricated mock results, and test leakage. Review agreement is evidence of review, not proof of correctness.
 
+
+## Internal-demo coordination and session recovery
+For the current demo sprint also read docs/RESUME.md and your lane in
+docs/DEMO_EXECUTION_PLAN.md. The latter explicitly assigns frontend app-local scaffolding
+and locks to the UI lane; Python/root configuration and shared API contracts remain with
+Sol as integrator. Every writer uses a separate worktree or isolated export, branch and
+handoff file. Never run two editing agents in the same working directory. New chats
+must recheck Git state and current PRs rather than trusting an old handoff as live truth.
+The later user decision authorizes a separate landing application; see ADR-006 and
+UI_SPEC.md. Do not remove the required scientific capabilities to meet a demo deadline.

@@ -35,3 +35,23 @@ Raw/hidden/scientist data never enters Contributor workspaces. Use a fresh sanit
 
 Every upload is decoded in a restricted process with allowed drivers, no credentials/network, generated filenames and byte/dimension/band/time limits. Reject VRT, arbitrary paths/URLs and executable raster expressions in this release. Apply access checks to tiles, artifacts, reports and jobs, not only creation.
 
+
+## ADR-006: optional landing and concurrent demo delivery (2026-09-07)
+The user requested an independently removable cinematic landing alongside Field Desk.
+Use apps/landing and apps/web as independent React/TypeScript applications with app-local
+manifests/locks. Workspace routes are relative to its own base; intended combined-host
+mount is /app/ while landing uses /. A direct workspace URL must bypass all landing
+code/assets. See UI_SPEC.md for behavior and DEMO_EXECUTION_PLAN.md for current ownership.
+
+The deadline changes delivery order, not the mandatory requirements in PROJECT_CONTEXT.
+A demonstrated subset does not complete R1-R8. Prioritize honest implementation modes,
+one genuine end-to-end route, inspectable evidence and real result retrieval while UI
+construction proceeds on labelled fixtures. No learned routing, LoRA, satellite ordering,
+or large new infrastructure before this path works.
+
+The current code has /api/v1 routes while ADR-003 describes proposed /v1 routes.
+Neither document text nor route existence establishes a complete working HTTP contract.
+Sol must publish the runnable OpenAPI and an explicit canonical-route decision before
+live UI integration. Muse builds view models and fixture presentation only until then;
+transport types are generated from the accepted OpenAPI, never handwritten in parallel.
+Contributor data boundaries in ADR-005 remain in force.

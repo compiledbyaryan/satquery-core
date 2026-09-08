@@ -2,8 +2,23 @@
 
 Design intent: an exact, calm instrument for investigating Earth observations. Map imagery is the visual centre; controls and evidence are easy to scan. SkyFi references inform density and map prominence, not copied layout/assets or purchasing features.
 
-## Five routes
-1. `/` Mission library: recent projects, real run status, New analysis, labelled example datasets. No marketing hero or vanity counters.
+## Two independent applications (ADR-006; user decision, 2026-09-07)
+The optional cinematic landing lives in `apps/landing/`; the workbench lives in
+`apps/web/`. Each has its own build, package manifest and lock. Do not introduce a
+root workspace or shared runtime package for the internal demo. Workbench code must
+not import landing code, Three.js, GSAP or landing video assets. Share documented
+brand values, not a mandatory runtime dependency. Keep the workbench independently
+startable and bookmark its direct URL. On a combined host the intended mounts are
+`/` for landing and `/app/` for the workbench; configure router/build bases and
+SPA deep-link fallback explicitly. Separate dev ports are acceptable. These are
+frontend locations, not new API endpoints.
+
+Build the workbench first, then the landing. The earlier ban on a marketing hero
+applies inside the workbench, not to the separate landing application. This resolves
+the later user request without replacing the five internal workbench routes.
+
+## Five workbench routes (relative to its configured base)
+1. `/` Mission library: recent projects, real run status, New analysis, labelled example datasets. No marketing hero or vanity counters inside the workbench.
 2. `/projects/:id` Workspace: assets, query, map and evidence. Primary working screen.
 3. `/runs/:id` Run inspector: observable steps, tool versions, parameters, checks and artifacts.
 4. `/reports/:id` Report: claims, map figures, limitations, provenance, download and scientist feedback.
@@ -37,3 +52,62 @@ Keyboard focus visible; controls have names; contrast checked; overlays explain 
 
 Use Impeccable selectively for critique, audit, polish and simplification. Browser screenshots, Playwright flows and human use decide quality. The PDF design plate is an illustrative layout, not a running application or scientific result.
 
+
+## Internal-demo visual direction
+Concept: Evidence Atlas. One editorial opening line, "Ask Earth. Inspect the evidence."
+Use a dramatic but brief imagery composition on the landing, then a calm, precise
+workbench. No required scroll sequence or delayed Try SatQuery button. First choice:
+CSS image layers and a lightweight optional local video/poster; defer Blender and a
+real-time 3D scene until the actual demo works. Decorative generated imagery must not
+be confused with scientific source images.
+
+Show only question, active inputs and main finding initially. Move advanced settings,
+full trace, model details and export options into labelled drawers. Preserve discovery
+with visible tooltips/help and keyboard controls. At smaller widths prioritize the
+image and finding over simultaneous panels. Apple-like restraint means clear hierarchy,
+spacing and consistent behavior; it does not mean hiding necessary scientific context.
+
+## Investigation progress (actual events, not theatrical completion)
+When submitted, show a compact investigation strip rather than a blocking full-screen
+animation: input check, tool execution, evidence checks, result. Each stage appears or
+changes only when corresponding backend events exist. Unsupported stages are omitted,
+not fabricated. Use a gentle pulse/sweep for indeterminate active work; elapsed time is
+wall time, not percent complete. Keep source imagery visible and interactive.
+Events require stable IDs and ordered sequence handling; repeated/out-of-order polls
+must not regress terminal state. Stop animation on completion, failure or cancellation.
+Reduced motion uses static stage labels. Announce meaningful changes with a polite
+live region without announcing every timer tick. Reconnect resumes server state.
+Fixture mode has a persistent "UI prototype — synthetic fixtures" label. Recorded
+real results display "Recorded run" and their execution time, never simulated live work.
+
+## Signature interaction: inspect a finding
+A selected claim reveals its source image/date, actual support artifact, computation
+or model identity, and a specific limitation in one drawer. Highlight only a region
+actually provided by the evidence; text-only outputs must not acquire invented boxes.
+Use "Measured", "Model interpretation", and "Not established" where evidence supports
+those distinctions. These labels are evidence categories, not calibrated probabilities.
+No claim of first-of-its-kind novelty is required.
+
+## Frontend acceptance checks for the internal demo
+These are required planned tests, not a claim that tests already exist.
+- Production build and TypeScript checks for each app independently.
+- Workbench build/start succeeds in a clean temporary copy without apps/landing.
+- Direct workspace entry, nested-route refresh and browser back/forward work.
+- Invalid inputs, unavailable provider, disconnect, retry, partial and failed results
+  have actionable UI; none silently become success.
+- Repeated submission preserves a single UI submission while pending; actual backend
+  idempotency is independently tested by Sol.
+- Selecting a claim reveals the matching evidence; unsupported evidence is labelled.
+- Before/after slider supports keyboard control; layers retain correct dates/identity.
+- Progress follows supplied events, tolerates duplicates and never regresses a terminal
+  state. Fixture tests prove presentation behavior, not backend functionality.
+- Live smoke: actual request -> retrievable finding -> evidence -> real download.
+  Unimplemented controls are disabled with explanation, not decorative dead buttons.
+- Playwright checks at 1440, 1024 and 390 widths: no page overflow, named controls,
+  visible focus, drawers close with Escape; reduced-motion mode has no continuous motion.
+- Missing video/WebGL/network assets do not block Try SatQuery or workbench entry.
+- Prefer event/condition assertions over arbitrary sleeps. Small screenshots complement
+  behavior tests; do not auto-accept changed baselines or claim tests are unbreakable.
+- Measure load/interaction on the actual demo laptop; cap polish to avoid jeopardizing
+  working input, result and evidence paths. Target <=3s local usable UI and responsive
+  controls under representative imagery; report measured values, not promises.
