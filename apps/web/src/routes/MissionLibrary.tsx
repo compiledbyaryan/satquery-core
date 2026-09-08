@@ -27,6 +27,17 @@ export function MissionLibrary(): JSX.Element {
           </article>
         ))}
       </div>
+      <div className="card recorded-entry" style={{ marginTop: 12 }}>
+        <span className="tag tag-model">Recorded run — not live analysis</span>
+        <h2 style={{ fontSize: 15, margin: "8px 0 4px" }}>Recorded model run: SmolVLM on EuroSAT sample 01</h2>
+        <p className="quiet small" style={{ margin: "0 0 8px" }}>
+          Actual CPU execution (2026-09-08, 203.0s) · verbatim caption + water-QA outputs · human review
+          included · not scientifically validated. Separate from synthetic fixtures.
+        </p>
+        <Link className="btn btn-primary" to="/recorded/run-01">
+          Open recorded model run
+        </Link>
+      </div>
       <div className="card" style={{ marginTop: 12 }}>
         <strong>Labelled example datasets (synthetic)</strong>
         <ul className="small">

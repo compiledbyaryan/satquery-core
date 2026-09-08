@@ -2,6 +2,7 @@ import { Link, NavLink, Route, Routes } from "react-router-dom";
 import "./app.css";
 import { FixtureBadge } from "./components/chrome";
 import { MissionLibrary } from "./routes/MissionLibrary";
+import { RecordedRunView } from "./routes/RecordedRunView";
 import { ReportView } from "./routes/ReportView";
 import { RunInspector } from "./routes/RunInspector";
 import { Settings } from "./routes/Settings";
@@ -40,6 +41,7 @@ export function App(): JSX.Element {
         <div className="main" id="main">
           <Routes>
             <Route path="/" element={<MissionLibrary />} />
+            <Route path="/recorded/run-01" element={<RecordedRunView />} />
             <Route path="/projects/:id" element={<Workspace />} />
             <Route path="/runs/:id" element={<RunInspector />} />
             <Route path="/reports/:id" element={<ReportView />} />

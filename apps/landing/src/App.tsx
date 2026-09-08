@@ -2,11 +2,16 @@ import "./style.css";
 
 // Workspace URL: same-origin `/app/` on a combined host, dev workbench port otherwise.
 // Never imports workbench code — plain anchor only.
-// Destination confirmed against apps/web: dev server port 5173, combined-host
-// mount `/app/` (vite base + router basename), route `/projects/proj-delta`
-// (workbench NavLink + fixture project). Not a guessed port.
+// Workbench is served two ways, both verified:
+//   dev:      workbench `vite dev` on :5173, no base -> /projects/proj-delta
+//   preview:  workbench `vite preview` on :4173 WITH base /app/ -> /app/projects/proj-delta
+// (apps/web vite.config.ts base "/app/", router basename detects the /app prefix.)
+// A same-origin href keeps landing->workspace working in every served context:
+// dev landing (:5174) links to dev workbench (:5173); any same-origin host
+// (preview :4174, or combined / + /app/) links to the /app/ workspace path.
 function workspaceHref(): string {
   if (typeof window !== "undefined" && window.location.port === "5174") return "http://localhost:5173/projects/proj-delta";
+  if (typeof window !== "undefined" && window.location.port === "4174") return "http://localhost:4173/app/projects/proj-delta";
   return "/app/projects/proj-delta";
 }
 

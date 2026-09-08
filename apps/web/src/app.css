@@ -159,6 +159,9 @@ textarea { line-height: 1.5; resize: vertical; }
   .rail { width: 64px; }
   .rail a { width: 56px; }
 }
+@media (max-width: 760px) {
+  .recorded-grid { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 560px) {
   .swipe { grid-template-columns: minmax(0, 1fr); }
   .map-col { padding: 10px; }
