@@ -14,7 +14,13 @@ from satquery.contracts import (
 
 
 class SARSpecialist:
-    """Wraps radar-compatible models behind a typed ToolContract."""
+    """Scripted SAR fixture behind a typed ToolContract (labelled mock).
+
+    FIX-02: this adapter reads no pixels and loads no model. It is registered
+    as implementation="mock" and refuses default execution with
+    MODEL_UNAVAILABLE. Pass scripted=True only for explicitly labelled
+    UI-fixture use; never in real analysis mode.
+    """
 
     CONTRACT = ToolContract(
         tool_id="sar_vqa",
@@ -29,13 +35,14 @@ class SARSpecialist:
         ),
         output_kinds=("text",),
         params_kind="single",
-        implementation="real",
+        implementation="mock",
         timeout_seconds=30,
         max_memory_mb=1024,
     )
 
-    def __init__(self, model_path: str | None = None):
+    def __init__(self, model_path: str | None = None, *, scripted: bool = False):
         self.model_path = model_path
+        self.scripted = scripted
 
     def run(
         self,
@@ -46,6 +53,12 @@ class SARSpecialist:
         if asset.modality != "sar":
             raise ValueError(
                 f"MODALITY_MISMATCH: Incompatible modality '{asset.modality}'. Tool requires 'sar'."
+            )
+
+        if not self.scripted:
+            raise ValueError(
+                "MODEL_UNAVAILABLE: no real SAR provider configured; "
+                "pass scripted=True only for labelled fixture use"
             )
 
         question = (params.question or "").lower()

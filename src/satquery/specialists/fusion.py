@@ -14,7 +14,13 @@ from satquery.contracts import (
 
 
 class FusionSpecialist:
-    """Wraps joint optical-radar fusion models behind a typed ToolContract."""
+    """Scripted optical-SAR fixture behind a typed ToolContract (labelled mock).
+
+    FIX-02: this adapter reads no pixels and loads no model. It is registered
+    as implementation="mock" and refuses default execution with
+    MODEL_UNAVAILABLE. Pass scripted=True only for explicitly labelled
+    UI-fixture use; never in real analysis mode.
+    """
 
     CONTRACT = ToolContract(
         tool_id="optical_sar_fusion",
@@ -34,13 +40,14 @@ class FusionSpecialist:
         ),
         output_kinds=("text", "metrics"),
         params_kind="fusion",
-        implementation="real",
+        implementation="mock",
         timeout_seconds=60,
         max_memory_mb=2048,
     )
 
-    def __init__(self, model_path: str | None = None):
+    def __init__(self, model_path: str | None = None, *, scripted: bool = False):
         self.model_path = model_path
+        self.scripted = scripted
 
     def run(
         self,
@@ -56,6 +63,12 @@ class FusionSpecialist:
         if sar.modality != "sar":
             raise ValueError(
                 f"MODALITY_MISMATCH: 'sar' slot requires SAR imagery, got '{sar.modality}'."
+            )
+
+        if not self.scripted:
+            raise ValueError(
+                "MODEL_UNAVAILABLE: no real fusion provider configured; "
+                "pass scripted=True only for labelled fixture use"
             )
 
         target = params.target.lower()

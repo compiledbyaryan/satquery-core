@@ -15,7 +15,13 @@ from satquery.validation import validate_temporal_order
 
 
 class TemporalSpecialist:
-    """Wraps bi-temporal change models behind a typed ToolContract."""
+    """Scripted bi-temporal fixture behind a typed ToolContract (labelled mock).
+
+    FIX-02: this adapter reads no pixels and loads no model. It is registered
+    as implementation="mock" and refuses default execution with
+    MODEL_UNAVAILABLE. Pass scripted=True only for explicitly labelled
+    UI-fixture use; never in real analysis mode.
+    """
 
     CONTRACT = ToolContract(
         tool_id="temporal_change",
@@ -35,13 +41,14 @@ class TemporalSpecialist:
         ),
         output_kinds=("text", "mask"),
         params_kind="temporal",
-        implementation="real",
+        implementation="mock",
         timeout_seconds=60,
         max_memory_mb=2048,
     )
 
-    def __init__(self, model_path: str | None = None):
+    def __init__(self, model_path: str | None = None, *, scripted: bool = False):
         self.model_path = model_path
+        self.scripted = scripted
 
     def run(
         self,
@@ -59,6 +66,12 @@ class TemporalSpecialist:
         # Modality check: ensure both observations match contract
         if before.modality != "optical" or after.modality != "optical":
             raise ValueError("MODALITY_MISMATCH: Both observations must be optical.")
+
+        if not self.scripted:
+            raise ValueError(
+                "MODEL_UNAVAILABLE: no real temporal provider configured; "
+                "pass scripted=True only for labelled fixture use"
+            )
 
         target = (params.target or "built_up").lower()
         days_apart = (after_time - before_time).days

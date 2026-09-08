@@ -45,8 +45,9 @@ def optical_asset():
     )
 
 
-def test_sar_specialist_successful_vqa(sar_asset):
-    specialist = SARSpecialist()
+def test_sar_specialist_labelled_fixture_vqa(sar_asset):
+    # FIX-02: scripted output is an explicitly labelled fixture, not a real result.
+    specialist = SARSpecialist(scripted=True)
     params = SingleParams(task="vqa", question="Is there flood water present?")
 
     result = specialist.run(asset=sar_asset, params=params)

@@ -45,8 +45,9 @@ def sar_asset():
     )
 
 
-def test_optical_specialist_successful_vqa(optical_asset):
-    specialist = OpticalSpecialist()
+def test_optical_specialist_labelled_fixture_vqa(optical_asset):
+    # FIX-02: scripted output is an explicitly labelled fixture, not a real result.
+    specialist = OpticalSpecialist(scripted=True)
     params = SingleParams(task="vqa", question="Is there any water body present?")
 
     result = specialist.run(asset=optical_asset, params=params)

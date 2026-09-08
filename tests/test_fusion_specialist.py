@@ -45,8 +45,9 @@ def sar_asset():
     )
 
 
-def test_fusion_specialist_successful_run(optical_asset, sar_asset):
-    specialist = FusionSpecialist()
+def test_fusion_specialist_labelled_fixture_run(optical_asset, sar_asset):
+    # FIX-02: scripted output is an explicitly labelled fixture, not a real result.
+    specialist = FusionSpecialist(scripted=True)
     params = FusionParams(
         task="cross_modal",
         target="urban_water",

@@ -153,7 +153,13 @@ def execute_plan(
             else:
                 result = runner(**call_kwargs)
         except Exception as err:  # noqa: BLE001 -- runner boundary normalizes provider failures
-            tool_err = ToolError(code="INTERNAL", message=str(err))
+            message = str(err)
+            # FIX-02: a missing real provider must surface as MODEL_UNAVAILABLE,
+            # never as INTERNAL or a fabricated success.
+            if message.startswith("MODEL_UNAVAILABLE"):
+                tool_err = ToolError(code="MODEL_UNAVAILABLE", message=message)
+            else:
+                tool_err = ToolError(code="INTERNAL", message=message)
             event = ExecutionEvent(
                 event_id=f"evt_{step.step_id}_err",
                 run_id=run_id,
