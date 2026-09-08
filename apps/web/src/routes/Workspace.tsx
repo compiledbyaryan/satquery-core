@@ -59,6 +59,7 @@ export function Workspace(): JSX.Element {
 
   const before = run.inputs.find((a) => a.id === selection.beforeId) ?? run.inputs.find((a) => a.slot === "before");
   const after = run.inputs.find((a) => a.id === selection.afterId) ?? run.inputs.find((a) => a.slot === "after");
+  const activeInputs = [before, after].filter((a) => a !== undefined);
   const claimRegion = run.claims.find((c) => c.id === selectedClaim)?.regionLabel;
 
   const submit = (question: string): void => {
@@ -108,16 +109,26 @@ export function Workspace(): JSX.Element {
         <AssetPanel assets={run.inputs} selection={selection} onChange={setSelection} />
         <div className="map-col">
           <ImageViewer before={before} after={after} activeId={selectedClaim} claimRegion={claimRegion} />
-          <QueryComposer pending={pending} onSubmit={submit} />
-          <div className="card" aria-label="Investigation progress">
-            <strong>Investigation — actual fixture events only</strong>
-            <div style={{ marginTop: 8 }} aria-live="polite">
+          <QueryComposer
+            pending={pending}
+            onSubmit={submit}
+            activeSummary={
+              activeInputs.length > 0
+                ? activeInputs
+                    .map((a) => `${a.slot} · ${a.acquiredOn ?? "date unknown"}`)
+                    .join("  ·  ")
+                : "No inputs selected"
+            }
+          />
+          <div className="card progress-card" aria-label="Investigation progress">
+            <strong>Investigation</strong>
+            <span className="quiet small"> — stages appear only from supplied events</span>
+            <div className="progress-body" aria-live="polite">
               <ProgressStrip events={run.events} status={statusLabel(run.status)} />
             </div>
             <p className="quiet small" style={{ marginBottom: 0 }}>
               Stage: <span className="mono">{statusLabel(run.status)}</span>
               {typeof run.elapsedSecs === "number" ? ` · wall time ${run.elapsedSecs}s (not percent)` : ""}
-              {" "}· repeated polls never regress a terminal state.
             </p>
           </div>
         </div>

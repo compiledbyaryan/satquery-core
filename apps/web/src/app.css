@@ -67,8 +67,8 @@ a { color: var(--link); }
 }
 .btn {
   appearance: none; border: 1px solid var(--divider); background: var(--panel);
-  color: var(--ink); border-radius: var(--radius); padding: 8px 14px;
-  font: inherit; cursor: pointer; transition: opacity 160ms ease, transform 160ms ease;
+  color: var(--ink); border-radius: var(--radius); padding: 8px 14px; min-height: 36px;
+  font: inherit; font-size: 14px; cursor: pointer; transition: opacity 160ms ease, transform 160ms ease;
 }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: #15251f; font-weight: 600; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -106,7 +106,8 @@ a { color: var(--link); }
 .swipe figure { margin: 0; }
 .swipe img { width: 100%; display: block; border-radius: 6px; }
 .progress-strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.stage { border: 1px solid var(--divider); border-radius: 999px; padding: 5px 12px; font-size: 13px; background: #fff; }
+.progress-card .progress-body { margin-top: 8px; }
+.stage { border: 1px solid var(--divider); border-radius: 999px; padding: 6px 12px; min-height: 28px; font-size: 13px; background: #fff; }
 .stage[data-state="done"] { border-color: var(--link); }
 .stage[data-state="active"] { border-color: var(--unresolved); }
 .finding {
@@ -139,7 +140,15 @@ a { color: var(--link); }
 .skip-link { position: absolute; left: -9999px; }
 .skip-link:focus { left: 10px; top: 10px; background: var(--accent); padding: 8px 12px; z-index: 50; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-textarea, select, input[type="text"] { font: inherit; width: 100%; padding: 9px 10px; border: 1px solid var(--divider); border-radius: var(--radius); }
+textarea, select, input[type="text"] { font: inherit; font-size: 14px; width: 100%; padding: 9px 10px; min-height: 36px; border: 1px solid var(--divider); border-radius: var(--radius); background: #fff; color: var(--ink); }
+textarea { line-height: 1.5; resize: vertical; }
+
+.composer-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+.composer-head label { font-size: 15px; }
+.composer-inputs { font-size: 12px; }
+.composer-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+.btn-ask { min-width: 120px; font-size: 15px; padding: 9px 18px; }
+.composer-advanced { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--divider); display: grid; gap: 6px; }
 @media (max-width: 1100px) {
   .workspace { grid-template-columns: 220px minmax(0, 1fr); }
   .evidence-col { grid-column: 1 / -1; border-left: none; border-top: 1px solid var(--divider); }
