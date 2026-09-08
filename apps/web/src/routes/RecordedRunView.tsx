@@ -15,9 +15,13 @@ export function RecordedRunView(): JSX.Element {
   const [record, setRecord] = useState<RecordedRun | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
+    setError(null);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8000);
     let cancelled = false;
-    fetch(RECORDED_RUN_URL, { headers: { Accept: "application/json" } })
+    fetch(RECORDED_RUN_URL, { signal: controller.signal, headers: { Accept: "application/json" } })
       .then((res) => {
         if (!res.ok) throw new Error(`Record unavailable (HTTP ${res.status})`);
         return res.json() as Promise<unknown>;
@@ -27,11 +31,14 @@ export function RecordedRunView(): JSX.Element {
       })
       .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof Error ? e.message : "Record unavailable");
-      });
+      })
+      .finally(() => clearTimeout(timeout));
     return () => {
       cancelled = true;
+      clearTimeout(timeout);
+      controller.abort();
     };
-  }, []);
+  }, [attempt]);
 
   return (
     <div className="page recorded">
@@ -45,7 +52,7 @@ export function RecordedRunView(): JSX.Element {
       <h1 style={{ marginTop: 8 }}>Recorded model run</h1>
       {error ? (
         <div className="notice error" role="alert">
-          Could not load the recorded run: {error}. The static record may be missing from this build.
+          Could not load the recorded run: {error}. The static record may be missing or unreachable. <button className="btn" onClick={() => setAttempt(v => v + 1)}>Retry loading record</button>
         </div>
       ) : record === null ? (
         <p className="quiet" role="status">

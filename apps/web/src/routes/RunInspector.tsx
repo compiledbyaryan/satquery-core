@@ -1,10 +1,12 @@
 import { Link, useParams } from "react-router-dom";
 import { ProgressStrip } from "../components/chrome";
-import { fixtureRuns } from "../fixtures/library";
+import { resolveRun } from "../logic/demo";
 
 export function RunInspector(): JSX.Element {
   const { id } = useParams();
-  const run = fixtureRuns.find((r) => r.id === id) ?? fixtureRuns[0];
+  const run = resolveRun(id);
+  if (!run) return <div className="page"><h1>Run unavailable</h1><p>This run is not saved in this browser session.</p><Link to="/projects/proj-delta">Open workspace</Link></div>;
+
   return (
     <div className="page">
       <p>
@@ -19,13 +21,13 @@ export function RunInspector(): JSX.Element {
         <p style={{ margin: "6px 0 0" }}>{run.question || "(empty)"}</p>
       </div>
       <div className="card" style={{ marginTop: 10 }}>
-        <strong>Steps (observed fixture events)</strong>
+        <strong>Supplied example stages</strong>
         <div style={{ marginTop: 8 }}>
           <ProgressStrip events={run.events} status={run.status} />
         </div>
         <ul className="small">
           <li>Tool versions: fixture-only labels on each claim (e.g. fixture-temporal-v0).</li>
-          <li>Parameters: before/after slots from the fixture project; SAR omitted unless selected.</li>
+          <li>Parameters: before/after slots from the fixture project; Only this run’s selected inputs are listed below.</li>
           <li>Checks: evidence checks pass only in the success/partial fixtures; failure fixtures stay failed.</li>
         </ul>
       </div>

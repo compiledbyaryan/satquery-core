@@ -6,8 +6,7 @@ export function MissionLibrary(): JSX.Element {
     <div className="library">
       <h1 style={{ marginTop: 0 }}>Mission library</h1>
       <p className="quiet">
-        Recent investigations and labelled example datasets. No marketing hero here — the workbench starts with
-        imagery and questions.
+        Choose an interactive synthetic example or inspect the original recorded model output.
       </p>
       <div style={{ marginBottom: 12 }}>
         <Link className="btn btn-primary" to="/projects/proj-empty">
@@ -42,7 +41,7 @@ export function MissionLibrary(): JSX.Element {
         <strong>Labelled example datasets (synthetic)</strong>
         <ul className="small">
           <li>River corridor before/after pair — temporal illustration, pixel coordinates only.</li>
-          <li>Single SAR look — modality toggle illustration, co-registration not established.</li>
+          <li>Single SAR look — selection illustration; joint analysis and co-registration are not established.</li>
         </ul>
       </div>
     </div>

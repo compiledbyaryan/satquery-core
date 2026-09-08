@@ -16,6 +16,7 @@ function svgPreview(background: string, label: string, sub: string): string {
     `<rect x="120" y="120" width="180" height="120" fill="#ffffff" opacity="0.28"/>` +
     `<rect x="330" y="90" width="150" height="190" fill="#15251F" opacity="0.35"/>` +
     `<path d="M60 330 Q200 250 330 300 T590 260" stroke="#C7DF5A" stroke-width="5" fill="none" opacity="0.9"/>` +
+    (label.startsWith("AFTER") ? `<rect x="350" y="185" width="85" height="60" fill="#E5E6B2"/>` : "") +
     `<text x="36" y="392" font-family="monospace" font-size="22" fill="#F5F4EF">${label}</text>` +
     `<text x="36" y="60" font-family="monospace" font-size="15" fill="#F5F4EF" opacity="0.85">${sub}</text>` +
     `</svg>`;
@@ -171,7 +172,7 @@ export const fixtureRuns: RunView[] = [
       },
       {
         id: "claim-s2",
-        shortText: "SAR preview retained for modality toggle; no joint measurement claimed.",
+        shortText: "SAR preview retained as an input; no joint measurement claimed.",
         category: "Not established",
         sourceAssetId: "asset-sar",
         sourceDate: "2026-03-13",

@@ -1,146 +1,72 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AssetPanel } from "../components/AssetPanel";
 import { EvidenceDrawer } from "../components/EvidenceDrawer";
 import { ImageViewer } from "../components/ImageViewer";
 import { QueryComposer } from "../components/QueryComposer";
 import { ProgressStrip } from "../components/chrome";
-import { fixtureProjects, fixtureRuns } from "../fixtures/library";
-import type { RunView, WorkspaceSelection } from "../viewmodel/types";
-
-function statusLabel(s: RunView["status"]): string {
-  return s.replace(/_/g, " ");
-}
+import { DemoSession, defaultSelection, demoAssets, demoQuestions, demoResult, emptyDemo, forgetLastDemo, lastDemo, saveDemo, selectedAssets } from "../logic/demo";
+import type { WorkspaceSelection } from "../viewmodel/types";
 
 export function Workspace(): JSX.Element {
   const { id } = useParams();
-  const project = useMemo(
-    () => fixtureProjects.find((p) => p.id === id) ?? fixtureProjects[0],
-    [id]
-  );
-  const [runId, setRunId] = useState<string>(project.runs[0]?.id ?? "run-empty");
-  const [selection, setSelection] = useState<WorkspaceSelection>({
-    beforeId: "asset-opt-before",
-    afterId: "asset-opt-after"
-  });
+  return <WorkspaceSession key={id} empty={id === "proj-empty"} />;
+}
+function WorkspaceSession({ empty }: { empty: boolean }): JSX.Element {
+  const [saved] = useState(() => empty ? undefined : lastDemo());
+  const [selection, setSelection] = useState<WorkspaceSelection>(saved?.selection ?? (empty ? {} : defaultSelection));
+  const selectionRef = useRef(selection);
+  const [question, setQuestion] = useState(saved?.question ?? demoQuestions[0]);
+  const [run, setRun] = useState(() => saved ? demoResult(saved.question, saved.selection, saved.id) : emptyDemo(selection));
   const [pending, setPending] = useState(false);
-  const [selectedClaim, setSelectedClaim] = useState<string | undefined>(undefined);
-
-  // Switching projects resets the run/claim view so one project's state
-  // can never masquerade as another's.
-  useEffect(() => {
-    setRunId(project.runs[0]?.id ?? "run-empty");
-    setSelectedClaim(undefined);
-    setPending(false);
-  }, [id, project]);
-
-  const run: RunView = useMemo(
-    () => fixtureRuns.find((r) => r.id === runId) ?? fixtureRuns[0],
-    [runId]
-  );
-  const runOptions: { id: string; label: string }[] = [
-    { id: "run-empty", label: "Empty — no run yet" },
-    { id: "run-queued", label: "Queued — waiting for a worker" },
-    { id: "run-running", label: "Running — tool executing" },
-    { id: "run-partial", label: "Partial — SAR input missing" },
-    { id: "run-success", label: "Success — finding with evidence" },
-    { id: "run-failed", label: "Failed — tool error, retry offered" },
-    { id: "run-unavailable", label: "Model unavailable — no provider" },
-    { id: "run-unsupported", label: "Unsupported — request refused" }
-  ];
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent): void => {
-      if (e.key === "Escape") setSelectedClaim(undefined);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const before = run.inputs.find((a) => a.id === selection.beforeId) ?? run.inputs.find((a) => a.slot === "before");
-  const after = run.inputs.find((a) => a.id === selection.afterId) ?? run.inputs.find((a) => a.slot === "after");
-  const activeInputs = [before, after].filter((a) => a !== undefined);
-  const claimRegion = run.claims.find((c) => c.id === selectedClaim)?.regionLabel;
-
-  const submit = (question: string): void => {
-    if (pending) return; // single UI submission while pending
-    setPending(true);
-    setSelectedClaim(undefined);
-    // Fixture preview: rotate to a labelled state derived from the question.
-    const lowered = question.toLowerCase();
-    const next = lowered.includes("own") || lowered.includes("worth")
-      ? "run-unsupported"
-      : lowered.includes("describe") && !lowered.includes("chang")
-        ? "run-unavailable"
-        : "run-running";
-    window.setTimeout(() => {
-      setRunId(next);
-      setPending(false);
-    }, 600);
+  const [inputsOpen, setInputsOpen] = useState(empty);
+  const [selectedClaim, setSelectedClaim] = useState<string>();
+  const [session] = useState(() => new DemoSession((next, busy) => {
+    setRun(next); setPending(busy);
+    if (!busy) saveDemo(next, selectionRef.current);
+  }));
+  useEffect(() => () => session.cancel(), [session]);
+  const reset = (next = selection): void => {
+    forgetLastDemo(); session.reset(next); setSelectedClaim(undefined);
   };
-
-  const isError = run.status === "failed" || run.status === "model_unavailable" || run.status === "unsupported";
-
+  const changeSelection = (next: WorkspaceSelection): void => {
+    selectionRef.current = next; setSelection(next); reset(next);
+  };
+  const changeQuestion = (next: string): void => { setQuestion(next); reset(); };
+  const openExample = (): void => {
+    changeSelection(defaultSelection); setQuestion(demoQuestions[0]);
+  };
+  const inputs = selectedAssets(selection);
+  const error = ["failed", "model_unavailable", "unsupported"].includes(run.status);
+  const claim = run.claims.find(c => c.id === selectedClaim);
   return (
-    <div>
-      <div className="toolbar">
-        <h1>{project.name}</h1>
-        <span className="pill">fixture project</span>
+    <div className="workbench">
+      <header className="toolbar">
+        <div><h1>River corridor</h1><span className="quiet small">Synthetic observation study</span></div>
         <span className="spacer" />
-        <label className="quiet small" htmlFor="run-select">
-          Run
-        </label>
-        <select id="run-select" value={runId} onChange={(e) => setRunId(e.target.value)}>
-          {runOptions.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.label}
-            </option>
-          ))}
-        </select>
-        <Link className="btn" to={`/runs/${run.id}`}>
-          Inspect run
-        </Link>
-        <Link className="btn" to={`/reports/${run.id}`}>
-          Export
-        </Link>
-      </div>
-
+        <button className="btn" onClick={() => setInputsOpen(v => !v)} aria-expanded={inputsOpen}>Inputs · {inputs.length}</button>
+        <button className="btn" onClick={() => reset()}>Reset run</button>
+        <Link className="btn" to="/recorded/run-01">Recorded run</Link>
+      </header>
+      {inputsOpen && <AssetPanel assets={demoAssets} selection={selection} onChange={changeSelection} />}
       <div className="workspace">
-        <AssetPanel assets={run.inputs} selection={selection} onChange={setSelection} />
         <div className="map-col">
-          <ImageViewer before={before} after={after} activeId={selectedClaim} claimRegion={claimRegion} />
-          <QueryComposer
-            pending={pending}
-            onSubmit={submit}
-            activeSummary={
-              activeInputs.length > 0
-                ? activeInputs
-                    .map((a) => `${a.slot} · ${a.acquiredOn ?? "date unknown"}`)
-                    .join("  ·  ")
-                : "No inputs selected"
-            }
-          />
-          <div className="card progress-card" aria-label="Investigation progress">
-            <strong>Investigation</strong>
-            <span className="quiet small"> — stages appear only from supplied events</span>
-            <div className="progress-body" aria-live="polite">
-              <ProgressStrip events={run.events} status={statusLabel(run.status)} />
-            </div>
-            <p className="quiet small" style={{ marginBottom: 0 }}>
-              Stage: <span className="mono">{statusLabel(run.status)}</span>
-              {typeof run.elapsedSecs === "number" ? ` · wall time ${run.elapsedSecs}s (not percent)` : ""}
-            </p>
-          </div>
+          <ImageViewer before={inputs.find(a => a.slot === "before")} after={inputs.find(a => a.slot === "after")} activeId={selectedClaim} claimRegion={claim?.regionLabel} />
+          <QueryComposer pending={pending} question={question} onChange={changeQuestion}
+            onSubmit={q => { forgetLastDemo(); setSelectedClaim(undefined); session.submit(q, selection, `demo-${crypto.randomUUID()}`); }}
+            activeSummary={inputs.length ? inputs.map(a => `${a.slot} · ${a.acquiredOn} (synthetic date)`).join(" / ") : "No inputs selected"} />
         </div>
-        <EvidenceDrawer
-          finding={pending ? "Working on fixture preview…" : run.finding}
-          claims={run.claims}
-          limitations={run.limitations}
-          notice={run.notice}
-          isError={isError}
-          selectedId={selectedClaim}
-          onSelectClaim={setSelectedClaim}
-        />
+        <aside className="result-panel">
+          <section className="progress-card" aria-label="Investigation progress">
+            <div className="result-heading"><h2>Investigation</h2><span className="status-label" data-status={run.status}>{run.status.replace(/_/g, " ")}</span></div>
+            <p className="quiet small">Simulated example workflow · no live analysis</p>
+            <div className="progress-body" aria-live="polite"><ProgressStrip events={run.events} status={run.status} /></div>
+          </section>
+          <EvidenceDrawer key={run.id + run.status} finding={run.finding} claims={run.claims} inputs={run.inputs} runId={run.id}
+            limitations={run.limitations} notice={run.notice} isError={error} selectedId={selectedClaim} onSelectClaim={setSelectedClaim} />
+          {error && <div className="recovery-actions"><button className="btn btn-primary" onClick={openExample}>Use change example</button><Link to="/recorded/run-01">Open recorded run</Link></div>}
+          {!pending && run.status !== "empty" && <div className="run-links"><Link to={`/runs/${run.id}`}>Inspect this run</Link><Link to={`/reports/${run.id}`}>Export this result</Link></div>}
+        </aside>
       </div>
     </div>
   );
