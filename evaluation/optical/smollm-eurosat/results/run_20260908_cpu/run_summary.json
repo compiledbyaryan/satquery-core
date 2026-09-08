@@ -1,0 +1,48 @@
+{
+  "cpu_rss_after_load_bytes": 2729680896,
+  "cpu_rss_before_load_bytes": 709427200,
+  "cpu_rss_final_bytes": 2707546112,
+  "cuda_visible_devices": "",
+  "elapsed_seconds": 203.036258,
+  "failed_invocations": 0,
+  "finished_at": "2026-09-08T08:56:46.074737+00:00",
+  "generation": {
+    "do_sample": false
+  },
+  "image_processor_class": "Idefics3ImageProcessorPil",
+  "load_seconds": 10.346409510995727,
+  "manifest": "/home/aryan/satquery-smollm-probe/evaluation/optical/smollm-eurosat/manifest.json",
+  "max_new_tokens": 24,
+  "mode": "cpu_rescue",
+  "model_class": "Idefics3ForConditionalGeneration",
+  "model_device": "cpu",
+  "model_dtype": "torch.float32",
+  "model_id": "HuggingFaceTB/SmolVLM-500M-Instruct",
+  "model_revision": "a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "model_snapshot": "/home/aryan/.cache/huggingface/hub/models--HuggingFaceTB--SmolVLM-500M-Instruct/snapshots/a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "packages": {
+    "Pillow": "12.3.0",
+    "huggingface-hub": "1.30.0",
+    "psutil": "7.2.2",
+    "torch": "2.8.0",
+    "torchvision": "0.23.0",
+    "transformers": "5.16.1"
+  },
+  "parameter_count": 507482304,
+  "preprocessing": {
+    "do_normalize": "True",
+    "do_rescale": "True",
+    "do_resize": "True",
+    "image_mean": "(0.5, 0.5, 0.5)",
+    "image_std": "(0.5, 0.5, 0.5)",
+    "rescale_factor": "0.00392156862745098",
+    "size": "SizeDict(height=None, width=None, longest_edge=2048, shortest_edge=None, max_height=None, max_width=None)"
+  },
+  "processor_class": "Idefics3Processor",
+  "python": "3.12.14",
+  "started_at": "2026-09-08T08:53:23.038498+00:00",
+  "status": "completed",
+  "successful_invocations": 3,
+  "torch_cuda_available": false,
+  "torch_threads": 8
+}

@@ -1,0 +1,32 @@
+{
+  "cpu_rss_before_load_bytes": 718913536,
+  "error": "Could not load any image processor class for /home/aryan/.cache/huggingface/hub/models--HuggingFaceTB--SmolVLM-500M-Instruct/snapshots/a7da5b986cb59b408707209984f360a5f4ad7e47. The model configuration resolves to the following image processor classes: pil: Idefics3ImageProcessorPil, torchvision: Idefics3ImageProcessor. None of these classes could be imported. Missing optional dependencies: torchvision. Please install the missing dependencies or select a backend that is available in your environment.",
+  "error_type": "ValueError",
+  "finished_at": "2026-09-08T07:49:08.047428+00:00",
+  "generation": {
+    "do_sample": false
+  },
+  "gpu_before_load": {
+    "driver_version": "592.82",
+    "memory_free_mib": "5920",
+    "memory_total_mib": "6141",
+    "memory_used_mib": "0",
+    "name": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "manifest": "/home/aryan/satquery-smollm-probe/evaluation/optical/smollm-eurosat/manifest.json",
+  "max_new_tokens": 48,
+  "model_id": "HuggingFaceTB/SmolVLM-500M-Instruct",
+  "model_revision": "a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "model_snapshot": "/home/aryan/.cache/huggingface/hub/models--HuggingFaceTB--SmolVLM-500M-Instruct/snapshots/a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "packages": {
+    "Pillow": "12.3.0",
+    "huggingface-hub": "1.30.0",
+    "psutil": "7.2.2",
+    "torch": "2.8.0",
+    "transformers": "5.16.1"
+  },
+  "python": "3.12.14",
+  "started_at": "2026-09-08T07:49:07.446952+00:00",
+  "status": "fatal_error",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/aryan/satquery-smollm-probe/evaluation/optical/smollm-eurosat/run_probe.py\", line 155, in main\n    processor = AutoProcessor.from_pretrained(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/models/auto/processing_auto.py\", line 330, in from_pretrained\n    return processor_class.from_pretrained(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/processing_utils.py\", line 1735, in from_pretrained\n    args = cls._get_arguments_from_pretrained(pretrained_model_name_or_path, processor_dict, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/processing_utils.py\", line 1875, in _get_arguments_from_pretrained\n    sub_processor = auto_processor_class.from_pretrained(\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/models/auto/image_processing_auto.py\", line 692, in from_pretrained\n    raise ValueError(_format_unavailable_image_processor_error(pretrained_model_name_or_path, mapping))\nValueError: Could not load any image processor class for /home/aryan/.cache/huggingface/hub/models--HuggingFaceTB--SmolVLM-500M-Instruct/snapshots/a7da5b986cb59b408707209984f360a5f4ad7e47. The model configuration resolves to the following image processor classes: pil: Idefics3ImageProcessorPil, torchvision: Idefics3ImageProcessor. None of these classes could be imported. Missing optional dependencies: torchvision. Please install the missing dependencies or select a backend that is available in your environment.\n"
+}

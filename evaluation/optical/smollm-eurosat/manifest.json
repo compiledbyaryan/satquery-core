@@ -1,0 +1,160 @@
+{
+  "dataset": "timm/eurosat-rgb",
+  "dataset_revision": "b4e28552cd5f3932b6abc37eb20d3e84901ad728",
+  "split": "train",
+  "selection": "fixed stride 1350 over streaming train order, no label filtering",
+  "n_samples": 12,
+  "licence": "MIT per the timm/eurosat-rgb dataset card. Underlying EuroSAT: Helber et al. 2019 (Sentinel-2). Used here as an unevaluated feasibility sample only.",
+  "acquisition_geospatial": "unknown (not provided by mirror; stays unknown)",
+  "samples": [
+    {
+      "opaque_file": "sample_01.png",
+      "dataset_row_index": 0,
+      "source_image_id": "PermanentCrop_807",
+      "source_label_id": 6,
+      "sha256": "916c3b694ce2c971b5d103a46a0e0031192531b35f18d83683c3308802cad484",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_02.png",
+      "dataset_row_index": 1350,
+      "source_image_id": "HerbaceousVegetation_1549",
+      "source_label_id": 2,
+      "sha256": "b695a02fc282db8825efd7809abc6f73bd7cf03aa9bd420c4a716f725ac6f891",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_03.png",
+      "dataset_row_index": 2700,
+      "source_image_id": "Pasture_476",
+      "source_label_id": 5,
+      "sha256": "bc2149ecd3567eaf512fa5ce52a68de2e9c84c96cee45e56fcae659b8a3a1355",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_04.png",
+      "dataset_row_index": 4050,
+      "source_image_id": "SeaLake_2729",
+      "source_label_id": 9,
+      "sha256": "e227ac9381190ace8d9de16c014662fd0b77a8e17ff7663e48f4a045150cb5e5",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_05.png",
+      "dataset_row_index": 5400,
+      "source_image_id": "SeaLake_102",
+      "source_label_id": 9,
+      "sha256": "2dfadf7bda3483bd8410e126cabc9242a888d7f083edeb42965de1e02942e9fc",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_06.png",
+      "dataset_row_index": 6750,
+      "source_image_id": "Pasture_1561",
+      "source_label_id": 5,
+      "sha256": "5235538e5c8dfc67d559ce653b955622882493e67c8b13f7fdf5a43f80a7ca81",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_07.png",
+      "dataset_row_index": 8100,
+      "source_image_id": "Highway_2232",
+      "source_label_id": 3,
+      "sha256": "b6bc249e03c834c7710a9437be89c64b3bfa2a99342a77fbb1778b799b057eb5",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_08.png",
+      "dataset_row_index": 9450,
+      "source_image_id": "SeaLake_1617",
+      "source_label_id": 9,
+      "sha256": "92f19fb3b75f5b89b5af570c8b76aa68cc9fcd35dda9a2f734ced6968a13af94",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_09.png",
+      "dataset_row_index": 10800,
+      "source_image_id": "PermanentCrop_1178",
+      "source_label_id": 6,
+      "sha256": "95b262bd0409073c01e69fb284837f67ab36de6aac095299a3a6cd9041f24bd2",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_10.png",
+      "dataset_row_index": 12150,
+      "source_image_id": "AnnualCrop_1187",
+      "source_label_id": 0,
+      "sha256": "645c08e08ebf7350bbab53ad440f3cecfe11cb1b4e803e8033325daa563d0f9c",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_11.png",
+      "dataset_row_index": 13500,
+      "source_image_id": "River_183",
+      "source_label_id": 8,
+      "sha256": "3cfb1a299a2633ee47dbe0fcb773ebe78c8665f93d38d2781ebe9dbe629bbb82",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    },
+    {
+      "opaque_file": "sample_12.png",
+      "dataset_row_index": 14850,
+      "source_image_id": "HerbaceousVegetation_571",
+      "source_label_id": 2,
+      "sha256": "211af31d7f395d6fb856532ed615102ff75708ec22a1198424dd59069db3d0cf",
+      "size_px": [
+        64,
+        64
+      ],
+      "mode": "RGB"
+    }
+  ],
+  "diagnostic": {
+    "opaque_file": "blank.png",
+    "sha256": "7d48f8dfc304a4e2c7e57290c9821c0ca69738968d5ed11651610f8f267bb2ef",
+    "description": "locally generated solid-gray 64x64 RGB diagnostic; not satellite data"
+  }
+}

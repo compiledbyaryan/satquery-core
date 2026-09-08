@@ -113,3 +113,149 @@ All from `/home/aryan/satquery-core` with
    frontend seam. Until (b) succeeds, real mode honestly stays unavailable.
 3. Decision needed from Aryan: which real image + model/provider is permitted
    (existing resources only, or authorize a specific bounded download/licence).
+
+# Handoff: bounded SmolVLM / EuroSAT real-inference feasibility probe
+
+- Status: blocked after two targeted failures; needs Sol review.
+- Branch/worktree: `sol/smollm-eurosat-probe` in
+  `/home/aryan/satquery-smollm-probe`.
+- Base commit: `167f2c7b79affd8dc2ce661dfca08541cddcfdb9` (`origin/main` at branch
+  creation).
+- Scope: standalone optical inference proof only. No application code, API,
+  specialist interface, test, schema, or locked core environment was changed.
+
+## Authorized resources and retained provenance
+
+- Official model: `HuggingFaceTB/SmolVLM-500M-Instruct`, Apache-2.0,
+  revision `a7da5b986cb59b408707209984f360a5f4ad7e47`.
+- Downloaded only JSON/text/README/Safetensors files. Optional ONNX files were
+  excluded. `model.safetensors` is 1,015,025,832 bytes and SHA-256
+  `d05b567eeaf534e83d375551f068ed57b5f52d37c657197f644af5ef9db091a2`.
+- Official sample source: `timm/eurosat-rgb`, MIT, revision
+  `b4e28552cd5f3932b6abc37eb20d3e84901ad728`, train split.
+- Fixed sample: 12 rows at streaming indexes 0, 1350, ..., 14850, chosen before
+  inference without label filtering. `manifest.json` retains identifiers,
+  audit-only labels, hashes, source, split and license. The inference runner
+  sees opaque filenames and in-memory PIL images only; prompts contain no class
+  information. Acquisition/geospatial details remain unknown.
+- Diagnostic: locally generated solid-gray 64x64 RGB `blank.png`, clearly
+  distinguished from benchmark imagery.
+
+## Environment and network budget
+
+- Separate environment: `/home/aryan/.venvs/satquery-smollm-312`, CPython
+  3.12.14. The core environment `/home/aryan/.venvs/satquery-core-312` was
+  preserved.
+- Key versions: accelerate 1.14.0, datasets 5.0.1, huggingface-hub 1.30.0,
+  Pillow 12.3.0, psutil 7.2.2, torch 2.8.0, torchvision 0.23.0, transformers
+  5.16.1. The full observed set is `environment.freeze.txt`.
+- Preflight: 941 GiB filesystem free; RTX 4050 Laptop GPU, driver 592.82,
+  6,141 MiB total and 5,920 MiB free.
+- Download accounting: dependency logs named 3,615.5 MiB plus 60.0 MiB
+  (rounded `uv` output); exact model-cache delta 1,020,010,311 bytes;
+  corrective torchvision download 8.2 MiB. Conservatively adding the full
+  documented 55.3 MB train parquet stays below 5.0 GB and the 8 GB budget.
+  No second model, serving framework, paid/gated service, or account was used.
+
+## Actual invocations and failures
+
+The runner follows the publisher's AutoProcessor / AutoModelForMultimodalLM
+chat-template flow and is configured for 26 deterministic invocations: caption
+and water-presence Q&A on 12 benchmark images plus the blank diagnostic. It
+records prompt/output/failure, preprocessing, latency, tensors, process RSS and
+GPU memory evidence as stages are reached.
+
+1. `results/run_20260908/run_summary.json`: processor construction
+   failed because Transformers 5.16.1 required optional `torchvision`. No image
+   invocation record exists because failure occurred before the loop. The outer
+   WSL command reported exit 1; the runner recorded `fatal_error` and is coded
+   to return 2 for a fatal setup failure.
+2. Installed only compatible `torchvision==0.23.0` (8.2 MiB), then
+   `results/run_20260908_retry1/run_summary.json`: processor loaded, but
+   model load failed during allocator warm-up with CUDA OOM while attempting a
+   966 MiB allocation. The outer WSL command again reported exit 1.
+   `nvidia-smi` had reported 4.95 GiB free. The backend's
+   impossible `17179869184.00 GiB` non-PyTorch-memory figure is retained
+   verbatim and must not be treated as a measurement.
+
+Recorded UTC timestamps give elapsed times of 0.600476 seconds and 21.714641
+seconds. Pre-load process RSS was 718,913,536 and 725,344,256 bytes. Both
+pre-load GPU snapshots reported 0 MiB used and 5,920 MiB free. No trustworthy
+post-failure memory sample or image-preprocessing latency was produced.
+
+The requested two-failure stop was observed. No image reached preprocessing or
+generation, so there are no captions, Q&A answers, blank-image comparison,
+latencies, or peak generation memory to report. This does not complete the
+real-imagery checkpoint and provides no scientific-accuracy evidence.
+
+## Runnable command
+
+```bash
+cd /home/aryan/satquery-smollm-probe
+TRANSFORMERS_OFFLINE=1 HF_HUB_OFFLINE=1 TOKENIZERS_PARALLELISM=false \
+  /home/aryan/.venvs/satquery-smollm-312/bin/python \
+  evaluation/optical/smollm-eurosat/run_probe.py \
+  --manifest evaluation/optical/smollm-eurosat/manifest.json \
+  --output-dir evaluation/optical/smollm-eurosat/results/NEW_RUN \
+  --max-new-tokens 48
+```
+
+Output directories are immutable: the runner refuses to overwrite one. Keep
+both existing failed-run summaries.
+
+## Smallest next step and decision for Sol
+
+Reproduce the load failure using the same pinned local model and inspect why
+Transformers 5.16.1 / Torch 2.8.0 allocator warm-up fails on this WSL/CUDA
+combination. Decide whether a publisher-supported lower-memory setting—an
+explicit dtype/device map or CPU execution—is acceptable for this feasibility
+checkpoint. Do not download a quantizer, another checkpoint, or a serving
+framework without new authorization.
+
+Only after a standalone image produces persisted caption/Q&A evidence should a
+small adapter be considered: accept decoded RGB pixels, invoke the processor and
+model service, and return text plus model revision/evidence. Keep it separate
+from scripted fixtures; the current optical specialist remains truthfully
+unavailable in real mode.
+
+
+# Addendum: CPU rescue succeeded — one caption + one answer (2026-09-08)
+
+- Status: first real-inference evidence obtained; checkpoint 2 partially evidenced
+  (single image, not a validated capability).
+- Rescue env/settings: `/home/aryan/.venvs/satquery-smollm-312`, CUDA hidden
+  (`CUDA_VISIBLE_DEVICES=""`, `torch.cuda.is_available()=False`), CPU float32,
+  `attn_implementation="eager"`, `local_files_only` on pinned revision
+  `a7da5b98...`, eval + `inference_mode`, batch 1, 24 new tokens, greedy.
+- Diagnosed cause of prior failures: (1) Transformers 5.16.1 Idefics3 processor
+  needed `torchvision` (fixed by installing pinned `torchvision==0.23.0`);
+  (2) `device_map="auto"` triggered CUDA allocator warm-up OOM on the 6 GiB
+  RTX 4050. CPU placement avoids both. Prior failure records preserved.
+- New code: `evaluation/optical/smollm-eurosat/run_rescue.py` (CPU-only,
+  writes a NEW run dir, never overwrites `run_20260908*`).
+- New evidence: `evaluation/optical/smollm-eurosat/results/run_20260908_cpu/`
+  (`run_summary.json` + `invocations.jsonl`, ~12 KB, status `completed`, 3/3).
+- Actual generations (sample_01, hash `916c3b69...`, row 0):
+  - caption: "A blurry image of a building with a person in a dark shirt."
+    (pre 5.43 s, gen 89.63 s, 1166 in / 15 out tokens)
+  - water_qa: "No." (pre 1.52 s, gen 56.24 s, 1162 in / 3 out tokens)
+  - blank caption: "A grey background with no text or objects."
+    (pre 0.70 s, gen 38.64 s, 1166 in / 10 out tokens)
+  Model: `Idefics3ForConditionalGeneration`, 507,482,304 params, CPU float32,
+  load 10.3 s, total run 203 s. Preprocessing: resize (longest edge 2048),
+  rescale 1/255, normalize mean/std (0.5, 0.5, 0.5).
+- Quality note (execution != accuracy): the audit label for sample_01 is
+  PermanentCrop (field pattern), yet the caption claims "a building with a
+  person" — a hallucination on 64x64 satellite pixels. The water answer "No."
+  is terse and unvalidated. Differing answers across images must not be
+  presented as scientific accuracy. Blank diagnostic behaves sanely.
+- Reusable command:
+  `CUDA_VISIBLE_DEVICES="" TRANSFORMERS_OFFLINE=1 HF_HUB_OFFLINE=1
+  TOKENIZERS_PARALLELISM=false /home/aryan/.venvs/satquery-smollm-312/bin/python
+  evaluation/optical/smollm-eurosat/run_rescue.py --manifest
+  evaluation/optical/smollm-eurosat/manifest.json --output-dir
+  evaluation/optical/smollm-eurosat/results/<NEW_RUN> --max-new-tokens 24`
+- Smallest adapter step for Sol: wrap `run_rescue.py`'s load/infer sequence as
+  a standalone `implementation="real"` optical tool that accepts decoded RGB
+  pixels + question, runs the pinned CPU path above, and returns text plus
+  model revision/input hash/evidence. Keep scripted fixtures untouched.

@@ -1,0 +1,32 @@
+{
+  "cpu_rss_before_load_bytes": 725344256,
+  "error": "CUDA out of memory. Tried to allocate 966.00 MiB. GPU 0 has a total capacity of 6.00 GiB of which 4.95 GiB is free. Including non-PyTorch memory, this process has 17179869184.00 GiB memory in use. Of the allocated memory 0 bytes is allocated by PyTorch, and 0 bytes is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
+  "error_type": "OutOfMemoryError",
+  "finished_at": "2026-09-08T07:51:45.491745+00:00",
+  "generation": {
+    "do_sample": false
+  },
+  "gpu_before_load": {
+    "driver_version": "592.82",
+    "memory_free_mib": "5920",
+    "memory_total_mib": "6141",
+    "memory_used_mib": "0",
+    "name": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "manifest": "/home/aryan/satquery-smollm-probe/evaluation/optical/smollm-eurosat/manifest.json",
+  "max_new_tokens": 48,
+  "model_id": "HuggingFaceTB/SmolVLM-500M-Instruct",
+  "model_revision": "a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "model_snapshot": "/home/aryan/.cache/huggingface/hub/models--HuggingFaceTB--SmolVLM-500M-Instruct/snapshots/a7da5b986cb59b408707209984f360a5f4ad7e47",
+  "packages": {
+    "Pillow": "12.3.0",
+    "huggingface-hub": "1.30.0",
+    "psutil": "7.2.2",
+    "torch": "2.8.0",
+    "transformers": "5.16.1"
+  },
+  "python": "3.12.14",
+  "started_at": "2026-09-08T07:51:23.777104+00:00",
+  "status": "fatal_error",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/aryan/satquery-smollm-probe/evaluation/optical/smollm-eurosat/run_probe.py\", line 159, in main\n    model = AutoModelForMultimodalLM.from_pretrained(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/models/auto/auto_factory.py\", line 402, in from_pretrained\n    return model_class.from_pretrained(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/modeling_utils.py\", line 4393, in from_pretrained\n    loading_info, disk_offload_index = cls._load_pretrained_model(model, state_dict, checkpoint_files, load_config)\n                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/modeling_utils.py\", line 4473, in _load_pretrained_model\n    caching_allocator_warmup(model, expanded_device_map, load_config.hf_quantizer)\n  File \"/home/aryan/.venvs/satquery-smollm-312/lib/python3.12/site-packages/transformers/modeling_utils.py\", line 5136, in caching_allocator_warmup\n    _ = torch.empty(int(byte_count // 2), dtype=torch.float16, device=device, requires_grad=False)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntorch.OutOfMemoryError: CUDA out of memory. Tried to allocate 966.00 MiB. GPU 0 has a total capacity of 6.00 GiB of which 4.95 GiB is free. Including non-PyTorch memory, this process has 17179869184.00 GiB memory in use. Of the allocated memory 0 bytes is allocated by PyTorch, and 0 bytes is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)\n"
+}
